@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registro - ReservaNoble</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/inicio.css">
+    <script>
+        // Check session status
+        fetch('api/api.php?action=get_current_user_full')
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Not logged in');
+          })
+          .then(user => {
+            if (user.rol === 'admin') {
+              window.location.href = 'administrador.html';
+            } else {
+              window.location.href = 'formulario.html';
+            }
+          })
+          .catch(() => {
+            // Not logged in, stay here
+            document.body.classList.remove('hidden-body');
+          });
+      </script>
+      <style>
+        .hidden-body { display: none; }
+      </style>
+</head>
+<body class="hidden-body">
+
+  <div class="page-layout" style="justify-content: center;">
+	<div class="login-box" style="max-width: 480px;">
+		<h2 style="color: var(--blue); text-align: center; margin-bottom: 24px;">Crear cuenta</h2>
+		<form id="form" novalidate>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+			    <input id="name" name="name" type="text" placeholder="Nombre completo" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+			    <input id="email" name="email" type="email" placeholder="Correo electrónico" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+			    <input id="password" name="password" type="password" placeholder="Contraseña (min. 6 caracteres)" required minlength="6">
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+			    <input id="confirm" name="confirm" type="password" placeholder="Confirmar contraseña" required minlength="6">
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-phone input-icon"></i>
+                <div style="display: flex; align-items: center; width: 100%;">
+                    <span style="padding: 0 10px; color: #666; font-weight: 500;">+56 9</span>
+			        <input id="phone" name="phone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" style="padding-left: 10px;">
+                </div>
+            </div>
+
+			<button type="submit" class="btn primary" style="width: 100%; margin-top: 10px;">Registrarse</button>
+			<div class="msg" id="msg" style="text-align: center; margin-top: 10px;">&nbsp;</div>
+		</form>
+		<p class="center-note" style="text-align: center; margin-top: 20px;">¿Ya tienes cuenta? <a href="index.html#login" style="color: var(--blue); font-weight: 600;">Iniciar sesión</a></p>
+	</div>
+  </div>
+
+	<script src="js/registrar.js"></script>
+</body>
+</html>

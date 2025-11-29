@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - ReservaNoble</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/inicio.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    .hidden-body { display: none; }
+    /* Estilos para ocultar secciones por defecto */
+    .spa-section:not(.active) { display: none !important; }
+  </style>
+</head>
+<body class="login-closed hidden-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo-link" href="index.html">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="#ffffff" opacity="0.08" />
+        </svg>
+        <span class="site-title">ReservaNoble</span>
+      </a>
+      
+      <!-- Botón Hamburguesa añadido -->
+      <button class="mobile-nav-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars" style="color: white; font-size: 1.5rem;"></i>
+      </button>
+
+      <nav class="main-nav" id="mainNav" aria-label="Navegación principal">
+        <a href="#inicio"><i class="fas fa-home"></i> Inicio</a>
+        <a href="#lugares"><i class="fas fa-map-marker-alt"></i> Lugares</a>
+        <a href="#como-funciona"><i class="fas fa-info-circle"></i> Cómo funciona</a>
+        <a href="#contacto-seccion"><i class="fas fa-envelope"></i> Contacto</a>
+      </nav>
+      <div class="header-actions">
+        <a id="headerLoginBtn" class="header-login-btn" href="#">Iniciar sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-layout spa-section active" id="inicio">
+    <main class="hero">
+      <div class="content">
+        <h1>El Escenario Perfecto para tus Eventos en Lebu</h1>
+        <p class="lead">Descubre y reserva los espacios más exclusivos de la ciudad. Desde celebraciones íntimas hasta grandes eventos corporativos, gestionamos tu experiencia de principio a fin con simplicidad y elegancia.</p>
+        
+        <div class="features-list">
+          <div class="feature-item">
+            <div class="icon-box"><i class="fas fa-star"></i></div>
+            <span>Espacios Exclusivos</span>
+          </div>
+          <div class="feature-item">
+            <div class="icon-box"><i class="fas fa-calendar-check"></i></div>
+            <span>Reserva Inmediata</span>
+          </div>
+          <div class="feature-item">
+            <div class="icon-box"><i class="fas fa-map-marked-alt"></i></div>
+            <span>Ubicación Privilegiada</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="auth">
+      <div class="login-box">
+    <h2>Reserva Eventos</h2>
+    <form id="loginForm" novalidate>
+      <div class="input-group">
+        <i class="fas fa-envelope input-icon"></i>
+        <input type="email" id="email" name="email" placeholder="Correo electrónico" required aria-label="Correo electrónico">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock input-icon"></i>
+        <input type="password" id="password" name="password" placeholder="Contraseña" required aria-label="Contraseña">
+        <!-- Nuevo icono de ojo -->
+        <i class="fas fa-eye toggle-password" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+      </div>
+      <button type="submit" id="loginBtn">
+        <span class="btn-text">Iniciar sesión</span>
+        <span class="spinner hidden">⟳</span>
+      </button>
+      <div class="msg" id="msg"></div>
+    </form>
+    
+    <div class="forgot-password">
+      <a href="forgot_password.html">¿Olvidaste tu contraseña?</a>
+    </div>
+    
+    <div class="google-signin">
+      <div id="g_id_onload"
+           data-client_id="265660542443-39uma075qkillr1kfhi6a1pc4fj48qqh.apps.googleusercontent.com"
+           data-callback="handleGoogleSignIn"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="sign_in_with"
+           data-shape="rectangular"
+           data-logo_alignment="left">
+      </div>
+    </div>
+        <p class="center-note">¿No tienes cuenta? <a href="registrar.html" id="registerLink">Registrarse</a></p>
+      </div>
+    </aside>
+  </div>
+
+
+
+  <!-- SECCIONES AGREGADAS -->
+  
+  <!-- Sección Lugares -->
+  <section id="lugares" class="wrap spa-section" style="padding-top:60px; padding-bottom: 60px;">
+    <div class="glass-panel">
+      <h1>Nuestros Espacios</h1>
+      <p>Explora una selección curada de lugares disponibles. Utiliza nuestros filtros inteligentes para encontrar el ambiente ideal que se ajuste a tu visión y presupuesto.</p>
+      
+      <!-- Buscador separado -->
+      <div style="margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <div class="input-group" style="position: relative;">
+            <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7);"></i>
+            <input type="text" id="searchName" placeholder="Buscar lugar por nombre..." oninput="filterVenues()" 
+                   style="width: 100%; padding: 14px 14px 14px 45px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 1rem; outline: none; transition: all 0.3s ease;">
+        </div>
+      </div>
+
+      <div class="lugares-layout">
+        <!-- Izquierda: Filtros -->
+        <div class="filters-column">
+            <div class="filters-section">
+                <h3>Filtros</h3>
+                <div class="filter-container">
+                    <div class="filter-group">
+                    <label for="filterCapacity"><i class="fas fa-users"></i> Capacidad Mínima</label>
+                    <input type="number" id="filterCapacity" placeholder="Ej: 50" min="1">
+                    </div>
+                    <div class="filter-group">
+                    <label for="filterBasePrice"><i class="fas fa-dollar-sign"></i> Precio Base Máximo</label>
+                    <input type="number" id="filterBasePrice" placeholder="Ej: 100000" min="0">
+                    </div>
+                    <div class="filter-group">
+                    <label for="filterPersonPrice"><i class="fas fa-user-tag"></i> Precio p/P Máximo</label>
+                    <input type="number" id="filterPersonPrice" placeholder="Ej: 5000" min="0">
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button class="btn primary" onclick="filterVenues()" style="flex:1;">Filtrar</button>
+                        <button class="btn outline" onclick="resetFilters()" style="width:40px; padding:0; display:flex; align-items:center; justify-content:center;" title="Limpiar filtros">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Centro: Lugares -->
+        <div class="venues-column">
+            <h3 style="color:#fff; margin-top:0; margin-bottom:12px;">Resultados</h3>
+            <div id="venuesList" class="venues-grid-index"></div>
+        </div>
+
+        <!-- Derecha: Mapa -->
+        <div class="map-column">
+           <div id="map" style="height:850px;border-radius:12px;overflow:hidden;background:#eef2ff"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; text-align: center;" id="action-buttons">
+        <a class="btn primary" href="#" onclick="document.getElementById('headerLoginBtn').click(); return false;">Inicia Sesión para Reservar</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Cómo Funciona -->
+  <section id="como-funciona" class="wrap spa-section" style="padding-top:60px; padding-bottom: 60px;">
+    <div class="glass-panel">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Cómo funciona</h1>
+        <p style="font-size: 1.1rem; opacity: 0.9;">Tu próximo evento en 3 simples pasos</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-icon"><i class="fas fa-search"></i></div>
+          <h2>1. Buscar y elegir</h2>
+          <p>Explora nuestra lista de lugares o usa el mapa interactivo. Filtra por capacidad y precio para encontrar el espacio ideal.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
+          <h2>2. Enviar solicitud</h2>
+          <p>Completa el formulario con la fecha, hora y detalles de tu evento. La solicitud se enviará al administrador.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+          <h2>3. Confirmación</h2>
+          <p>Recibirás una notificación cuando tu reserva sea aprobada. ¡Listo! Tu evento está agendado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Contacto -->
+  <section id="contacto-seccion" class="wrap spa-section" style="padding-top:60px; padding-bottom: 60px;">
+    <h1 class="contact-page-title">Hablemos</h1>
+    <p class="contact-page-desc">¿Tienes alguna duda o necesitas asesoría especial? Estamos aquí para ayudarte a hacer realidad tu evento.</p>
+    <div class="contact-form-container">
+      <form id="contactForm" onsubmit="submitContactForm(event)">
+        <label>Nombre
+          <input type="text" name="nombre" placeholder="Tu nombre completo" required />
+        </label>
+        <label style="margin-top:16px;">Email
+          <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required />
+        </label>
+        <label style="margin-top:16px;">Asunto
+          <input type="text" name="asunto" placeholder="Asunto del mensaje" required />
+        </label>
+        <label style="margin-top:16px;">Mensaje
+          <textarea name="mensaje" rows="6" placeholder="¿En qué podemos ayudarte?" required></textarea>
+        </label>
+        <button type="submit" class="btn primary" style="margin-top:20px; width: 100%;">Enviar mensaje</button>
+      </form>
+    </div>
+  </section>
+
+  <footer id="site-footer" class="site-footer">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div>© ReservaNoble — <a href="mailto:admin@lebu.cl">admin@lebu.cl</a></div>
+        <div class="footer-links"><a href="#">Aviso legal</a> · <a href="#">Privacidad</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de Verificación 2FA -->
+  <div id="twoFactorModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Verificación en 2 pasos</h2>
+      <p class="info-text">Hemos enviado un código de 6 dígitos a tu correo electrónico.</p>
+      <div class="input-group">
+        <i class="fas fa-shield-alt input-icon"></i>
+        <input type="text" id="verificationCode" maxlength="6" placeholder="000000" autocomplete="off" aria-label="Código de verificación">
+      </div>
+      <button id="verifyCodeBtn" class="btn">
+        <span class="btn-text">Verificar código</span>
+        <span class="spinner hidden">⟳</span>
+      </button>
+      <button id="resendCodeBtn" class="btn secondary" style="margin-top: 10px;">
+        <span>Reenviar código</span>
+      </button>
+      <div class="msg" id="twoFactorMsg"></div>
+      <p class="center-note"><a href="#" id="cancelTwoFactor">Cancelar e iniciar sesión de nuevo</a></p>
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALLES DEL LUGAR -->
+  <div id="venueDetailsModal" class="modal hidden" style="z-index: 2000;">
+      <div class="modal-content" style="max-width: 800px; padding: 0; width: 90%; margin: 5% auto; max-height: 90vh; overflow-y: auto;">
+          
+          <!-- Encabezado con Imagen Grande (Hero Image) -->
+          <div style="position: relative; height: 300px; background: #000;">
+              <div id="detailCarousel" style="width: 100%; height: 100%; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch;">
+                  <!-- Las imágenes se inyectan aquí -->
+                  <img id="detailImage" src="" alt="Lugar" style="min-width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center;">
+              </div>
+              
+              <!-- Controles del carrusel -->
+              <button onclick="scrollCarousel(-1)" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 20px;">&#10094;</button>
+              <button onclick="scrollCarousel(1)" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 20px;">&#10095;</button>
+              
+              <button onclick="closeDetailsModal()" class="close-btn" style="background: white; border-radius: 50%; width: 30px; height: 30px; opacity: 0.8; position: absolute; top: 10px; right: 10px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; z-index: 20; color: #333;">&times;</button>
+          </div>
+
+          <div style="padding: 25px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                  <div>
+                      <h2 id="detailName" style="margin: 0; color: var(--blue); font-size: 2rem;">Nombre del Lugar</h2>
+                      <p id="detailAddress" style="color: #64748b; margin-top: 5px;"><i class="fas fa-map-marker-alt"></i> Dirección...</p>
+                  </div>
+                  <div style="text-align: right;">
+                      <div style="font-size: 1.5rem; font-weight: bold; color: var(--blue);">$<span id="detailPrice">0</span></div>
+                      <small style="color: #64748b;">Precio Base</small>
+                      <div style="font-size: 1.2rem; font-weight: bold; color: var(--blue); margin-top: 5px;">$<span id="detailPersonPrice">0</span></div>
+                      <small style="color: #64748b;">Precio p/P</small>
+                  </div>
+              </div>
+
+              <!-- Badges de Capacidad y Estado -->
+              <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                  <span class="badge" style="background: #e0e7ff; color: #4338ca; padding: 5px 10px; border-radius: 5px;">
+                      <i class="fas fa-users"></i> <span id="detailCapacity">0</span> Personas
+                  </span>
+                  <span id="detailStatus" class="badge" style="padding: 5px 10px; border-radius: 5px;">Disponible</span>
+              </div>
+
+              <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+              <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+                  <!-- Columna Izquierda: Descripción -->
+                  <div>
+                      <h3 style="margin-bottom: 10px; color: #333;">Sobre este lugar</h3>
+                      <p id="detailDescription" style="line-height: 1.6; color: #475569;">
+                          Descripción detallada del lugar...
+                      </p>
+                  </div>
+
+                  <!-- Columna Derecha: Servicios -->
+                  <div>
+                      <h3 style="margin-bottom: 10px; color: #333;">Lo que ofrece</h3>
+                      <ul id="detailServices" style="list-style: none; padding: 0; color: #475569; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
+                          <!-- Se llena con JS -->
+                      </ul>
+                  </div>
+              </div>
+
+              <div style="margin-top: 30px; text-align: right;">
+                  <button onclick="closeDetailsModal()" class="btn secondary" style="background: #64748b; color: white; margin-right: 10px;">Cerrar</button>
+                  <button id="detailActionBtn" class="btn primary">Inicia Sesión para Reservar</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- LIGHTBOX PARA IMÁGENES (Zoom) -->
+  <div id="imageLightbox" class="modal hidden" style="z-index: 3000; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center;">
+      <button onclick="closeLightbox()" style="position: absolute; top: 20px; right: 30px; background: transparent; border: none; color: white; font-size: 40px; cursor: pointer; z-index: 3001;">&times;</button>
+      <img id="lightboxImage" src="" style="max-width: 90%; max-height: 90vh; object-fit: contain; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+  </div>
+
+  <!-- Contenedor de Toasts -->
+  <div id="toast-container"></div>
+
+  <script src="js/toast.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

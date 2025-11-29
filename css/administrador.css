@@ -1,0 +1,1084 @@
+/* Variables y reset */
+:root {
+  --primary-color: #2563eb;
+  --primary-dark: #1d4ed8;
+  --danger-color: #dc2626;
+  --success-color: #16a34a;
+  --warning-color: #f59e0b;
+  --gray: #6b7280;
+  --gray-light: #f9fafb;
+  --text-light: #6b7280;
+  --font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Reset y tipografía básica */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: var(--font-family);
+  display:flex;
+  min-height:100vh;
+  /* Fondo similar al inicio pero más adecuado para panel de trabajo */
+  background: linear-gradient(rgba(30, 41, 59, 0.95), rgba(30, 41, 59, 0.98)), 
+              url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+  background-size: cover;
+  background-attachment: fixed;
+  color:#f1f5f9; /* Texto claro por defecto */
+}
+
+/* ====== Menú lateral ====== */
+.sidebar {
+  width: 280px;
+  background: rgba(15, 23, 42, 0.9); /* Más oscuro y opaco para contraste */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed; /* Fijar el sidebar */
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.sidebar h2 {
+  color: #ffffff;
+  font-size: 1.4rem; /* Título sidebar más grande */
+  padding: 0 12px;
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+.sidebar-links {
+  flex: 1;
+  overflow-y: auto; /* Permitir scroll si hay muchos enlaces */
+}
+
+/* Enlaces de navegación del sidebar */
+.sidebar a{
+  color: #cbd5e1; /* Texto gris muy claro */
+  text-decoration: none;
+  padding: 14px 18px; /* Botones más grandes */
+  border-radius: 10px;
+  margin: 6px 0;
+  font-size: 1.05rem; /* Fuente sidebar aumentada */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s, color 0.2s;
+}
+.sidebar a:hover{
+  background: rgba(255,255,255,0.1);
+  color: #ffffff;
+}
+.sidebar a.active{
+  background: var(--primary-color);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.logout-btn {
+  margin-top: auto; /* Empuja al fondo */
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.15); /* match formulario style */
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ffffff;
+}
+
+/* ====== Contenido principal ====== */
+.main-content {
+  flex: 1;
+  padding: 32px;
+  background: transparent; /* Fondo transparente para ver el background del body */
+  min-height: 100vh;
+  margin-left: 280px; /* Dejar espacio para el sidebar fijo */
+  width: calc(100% - 280px);
+}
+
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+header h1 {
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.texto-claro {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* ====== Secciones ====== */
+.section {
+  display: none; /* Oculto por defecto */
+  animation: fadeIn .3s ease;
+  width: 100%;
+  background: rgba(30, 41, 59, 0.85); /* Fondo más opaco para mejor contraste */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+  padding: 24px;
+  color: #ffffff; /* Texto blanco puro */
+}
+.section.active {
+  display: block; /* Visible si tiene clase active */
+}
+.section-title {
+  font-size: 1.75rem; /* Título más grande */
+  color: #ffffff;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+.lead {
+  color: rgba(255, 255, 255, 0.9); /* Texto secundario más brillante */
+  margin-bottom: 24px;
+  font-size: 1.1rem; /* Texto lead más grande */
+}
+
+/* ====== Tablas ====== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+#requestsContainer {
+  overflow-x: auto; /* Permitir scroll horizontal en tablas anchas */
+}
+table {
+  width: 100%;
+  margin-top: 0; /* Remove margin as wrapper handles it */
+  border-collapse: collapse; /* Bordes más limpios */
+  border-radius: 0; /* Radius on wrapper */
+  overflow: hidden;
+  box-shadow: none; /* Shadow on wrapper */
+  min-width: 800px; /* Ancho mínimo para asegurar legibilidad */
+  background: rgba(15, 23, 42, 0.4); /* Fondo de tabla más oscuro para contraste */
+}
+th, td {
+  padding: 16px 20px; /* Padding aumentado */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: left;
+  font-size: 1rem; /* Fuente de tabla aumentada */
+  white-space: nowrap; /* Evitar que el texto se rompa */
+}
+th {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff; /* Encabezados blancos */
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem; /* Encabezados un poco más grandes */
+  letter-spacing: 0.05em;
+}
+td {
+  color: #f8fafc; /* Texto de celdas muy claro */
+}
+tr:last-child td {
+  border-bottom: 0; /* Sin borde en la última fila */
+}
+tr:hover td {
+  background: rgba(255, 255, 255, 0.1); /* Hover más visible */
+}
+
+/* ====== Botones (Genérico) ====== */
+.btn, button {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+  color: white;
+}
+.btn:hover, button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+}
+.btn.secondary, button.secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+.btn.secondary:hover, button.secondary:hover {
+  background: #d1d5db;
+}
+.delete-btn, .btn.danger {
+  background: var(--error);
+  color: white;
+}
+.delete-btn:hover, .btn.danger:hover {
+  background: #b91c1c;
+}
+
+/* Botones pequeños para tablas */
+.btn.small, button.small {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: white !important; /* Asegurar que el texto sea visible */
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Botones específicos por función y contenido */
+
+/* Editar - Azul (contiene función edit) */
+button[onclick*="editUser"],
+button[onclick*="editVenue"] {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+button[onclick*="editUser"]:hover,
+button[onclick*="editVenue"]:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Cambiar estado - Naranja/Amarillo (contiene función toggle) */
+button[onclick*="toggleVenueStatus"] {
+  background: var(--warning-color) !important;
+  color: white !important;
+}
+
+button[onclick*="toggleVenueStatus"]:hover {
+  background: #d97706 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Eliminar - Rojo */
+.delete-btn, .btn.danger,
+button[onclick*="deleteUser"],
+button[onclick*="deleteVenue"],
+button[onclick*="deleteReport"] {
+  background: var(--danger-color) !important;
+  color: white !important;
+}
+
+.delete-btn:hover, .btn.danger:hover,
+button[onclick*="deleteUser"]:hover,
+button[onclick*="deleteVenue"]:hover,
+button[onclick*="deleteReport"]:hover {
+  background: #b91c1c !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Reportes - Verde para marcar como resuelto (cuando no está resuelto) */
+button[onclick*="toggleReportStatus"]:not([style*="background: var(--warning)"]) {
+  background: var(--success-color) !important;
+  color: white !important;
+}
+
+button[onclick*="toggleReportStatus"]:not([style*="background: var(--warning)"]):hover {
+  background: #059669 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Reportes - Amarillo cuando está resuelto (respetar el color del texto) */
+button[onclick*="toggleReportStatus"][style*="background: var(--warning)"] {
+  background: var(--warning-color) !important;
+  /* No forzar color blanco aquí, dejar que el inline style maneje el color del texto */
+}
+
+/* Asegurar que los iconos sean visibles en todos los botones */
+.btn.small i, .delete-btn i, button.small i {
+  color: white !important;
+  font-size: 0.9rem;
+}
+
+/* ====== Formulario de lugar ====== */
+.venue-form {
+  background: transparent; /* Quitar fondo, ya está en .section */
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: #f8fafc; /* bright text for fields in dark section */
+}
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.form-group {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  color: #f8fafc; /* light label text for dark background */
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 12px 12px;
+  font-size: 1rem;
+  transition: all 0.24s ease;
+  background: rgba(255,255,255,0.03);
+  color: #f8fafc;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+  background: rgba(255,255,255,0.06);
+}
+.form-group input[readonly] {
+  background: rgba(255,255,255,0.02);
+  color: #e6edf3;
+}
+.form-group select {
+  appearance: none;
+  background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.75rem center/16px 12px;
+}
+
+/* Estado venue */
+.venue-status[value="available"] { color: var(--success-color); font-weight: 500; }
+.venue-status[value="maintenance"] { color: var(--warning-color); font-weight: 500; }
+.venue-status[value="reserved"] { color: var(--danger-color); font-weight: 500; }
+
+/* ====== Acciones ====== */
+.form-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ====== Mapa ====== */
+#adminMap {
+  width: 100%;
+  height: 500px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
+}
+
+/* --- Pulsing marker (same style used across site) --- */
+.pulsing-marker {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--marker-color, #3b82f6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+  animation: pulse-shadow 2s infinite;
+  z-index: 100; /* Ensure it's above the map tiles */
+}
+.pulsing-marker::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--marker-color, #3b82f6);
+  opacity: 0;
+  animation: scanner-wave 2s infinite;
+}
+.pulsing-marker::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px; height: 6px;
+  background: #fff;
+  border-radius: 50%;
+}
+@keyframes pulse-shadow { 0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.2);} 70% { box-shadow: 0 0 0 14px rgba(0,0,0,0.02);} 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
+@keyframes scanner-wave { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; } 70% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; } }
+
+/* ====== Mensajes ====== */
+.msg {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: none; /* Oculto por defecto, se muestra con JS */
+}
+.msg.error {
+  display: block;
+  background: #fef2f2;
+  color: var(--danger-color);
+  border: 1px solid #fecaca;
+}
+.msg.success {
+  display: block;
+  background: #f0fdf4;
+  color: var(--success-color);
+  border: 1px solid #bbf7d0;
+}
+
+/* ====== Layout sección eventos ====== */
+.eventos-container {
+  display: flex;
+  gap: 24px;
+  margin: 20px 0;
+}
+.eventos-form {
+  flex: 0 0 40%;
+  max-width: 500px;
+}
+.eventos-map {
+  flex: 1;
+  min-height: 500px; /* Asegurar altura */
+}
+.venues-title {
+  margin: 40px 0 16px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 1200px) {
+  .eventos-container {
+    flex-direction: column;
+  }
+  .eventos-form {
+    width: 100%;
+    max-width: none;
+  }
+  .eventos-map {
+    height: 400px;
+    min-height: 400px;
+  }
+}
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 100%;
+    position: fixed; /* Fixed at bottom for mobile app feel */
+    bottom: 0;
+    top: auto; /* Reset top */
+    z-index: 1000;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Distribute items */
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.98);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: none;
+    border-right: none;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+  }
+
+  .sidebar h2 { display: none; } 
+
+  .sidebar-links { 
+    display: flex; 
+    flex-direction: row; 
+    gap: 0; 
+    flex: 1;
+    justify-content: space-around; /* Even spacing */
+  }
+
+  .sidebar a { 
+      flex-shrink: 1; 
+      padding: 8px 4px;
+      font-size: 0.7rem; /* Smaller text */
+      margin: 0;
+      flex-direction: column; /* Icon top, text bottom */
+      gap: 4px;
+      text-align: center;
+      border-radius: 8px;
+      min-width: 50px;
+  }
+  
+  .sidebar a i {
+      font-size: 1.2rem; /* Larger icon */
+      margin-bottom: 2px;
+  }
+
+  /* Hide text on very small screens if needed, but try to keep it */
+  .sidebar a span { 
+      display: block; 
+      font-weight: 500;
+  }
+  
+  .logout-btn { 
+      margin-top: 0; 
+      margin-left: 8px; 
+      flex-shrink: 0;
+      padding: 8px;
+      width: 40px;
+      height: 40px;
+      justify-content: center;
+      border-radius: 50%; /* Circular button */
+      background: rgba(239, 68, 68, 0.2);
+  }
+  .logout-btn span { display: none; } 
+  .logout-btn i { margin: 0; font-size: 1.1rem; }
+  
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+    padding: 16px 16px 80px 16px; /* Add bottom padding for fixed nav */
+    margin-top: 0;
+  }
+  .section { padding: 16px; }
+  header h1 { font-size: 1.5rem; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ======== ESTILOS DE MODAL (PARA ADMIN) ======== */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Fondo oscuro semitransparente (backdrop) */
+  background: rgba(30,41,59,0.35); 
+  animation: fadeIn 0.2s ease;
+}
+.modal.hidden {
+  display: none;
+}
+.modal-content {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.12);
+  padding: 24px;
+  min-width: 340px;
+  max-width: 95vw;
+  width: 500px; /* Ancho para el formulario de admin */
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.close-btn {
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.close-btn:hover {
+  background: #e2e8f0;
+  color: var(--danger-color);
+}
+/* Usar los estilos de .venue-form para el form del modal */
+.modal-content .venue-form {
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Fix para formularios dentro de modales (fondo blanco) */
+.modal-content .venue-form .form-group label {
+  color: #1e293b; /* Texto oscuro para labels en fondo blanco */
+}
+
+.modal-content .venue-form .form-group input,
+.modal-content .venue-form .form-group textarea,
+.modal-content .venue-form .form-group select {
+  background: #f8fafc; /* Fondo gris muy claro para inputs */
+  color: #0f172a;      /* Texto oscuro para inputs */
+  border: 1px solid #cbd5e1;
+}
+
+.modal-content .venue-form .form-group input:focus,
+.modal-content .venue-form .form-group textarea:focus,
+.modal-content .venue-form .form-group select:focus {
+  background: #fff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.modal-content .venue-form .form-group input[readonly] {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* --- Toasts (Notificaciones) --- */
+#toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none; /* Para que no bloquee clics debajo si es transparente */
+}
+
+.toast {
+  background: #fff;
+  color: #1e293b;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  max-width: 400px;
+  pointer-events: auto;
+  border-left: 5px solid #cbd5e1;
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 500;
+}
+
+.toast.success { border-left-color: var(--success-color); }
+.toast.success i { color: var(--success-color); }
+
+.toast.error { border-left-color: var(--danger-color); }
+.toast.error i { color: var(--danger-color); }
+
+.toast.info { border-left-color: var(--primary-color); }
+.toast.info i { color: var(--primary-color); }
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastFadeOut {
+  to { opacity: 0; transform: translateX(100%); }
+}
+
+/* --- Spinner de carga --- */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
+}
+
+/* --- Modal de Confirmación --- */
+#confirmModal .modal-content {
+  max-width: 400px;
+  text-align: center;
+}
+#confirmModal h3 {
+  justify-content: center;
+  color: var(--warning-color);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+#confirmModal p {
+  color: #475569;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+#confirmModal .form-actions {
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Fix para sección de dueño (adaptado a dark theme) */
+.owner-section .form-group label {
+  color: #cbd5e1 !important; 
+}
+.owner-section .form-group input {
+  background: rgba(255,255,255,0.05) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+.owner-section .form-group input:focus {
+  border-color: var(--primary-color) !important;
+  background: rgba(255,255,255,0.1) !important;
+}
+
+
+/* Estilos para el modal de gesti�n de lugares */
+#venueModal .modal-content {
+    background: #1e293b; /* Fondo oscuro para coincidir con el tema */
+    color: #f8fafc;
+}
+#venueModal .modal-header h3 {
+    color: #f8fafc;
+}
+#venueModal .close-btn {
+    background: rgba(255,255,255,0.1);
+    color: #f8fafc;
+}
+#venueModal .close-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+/* Ajustar inputs dentro del modal oscuro */
+#venueModal .form-group label {
+    color: #cbd5e1;
+}
+#venueModal .form-group input,
+#venueModal .form-group textarea,
+#venueModal .form-group select {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+#venueModal .form-group input:focus,
+#venueModal .form-group textarea:focus {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--primary-color);
+}
+/* Excepci�n para la secci�n de due�o que tiene fondo claro */
+#venueModal .owner-section {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+#venueModal .owner-section h4 {
+    color: #cbd5e1 !important;
+}
+#venueModal .owner-section .form-group label {
+    color: #cbd5e1 !important;
+}
+#venueModal .owner-section .form-group input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --- CORRECCIONES Y MEJORAS DEL MODAL DE LUGARES --- */
+#venueModal .modal-content {
+    width: 1200px !important;
+    max-width: 95vw !important;
+}
+
+#venueModal .eventos-container {
+    gap: 30px;
+}
+
+#venueModal .eventos-form {
+    flex: 0 0 380px !important;
+    max-width: 380px !important;
+    width: 380px !important;
+}
+
+#venueModal .eventos-map {
+    flex: 1 !important;
+    min-height: 550px !important;
+}
+
+#venueModal .eventos-map #adminMap {
+    height: 100% !important;
+    min-height: 550px !important;
+}
+
+@media (max-width: 1000px) {
+    #venueModal .eventos-container {
+        flex-direction: column;
+    }
+    #venueModal .eventos-form {
+        flex: 1 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    #venueModal .eventos-map {
+        min-height: 350px !important;
+        order: -1;
+    }
+    #venueModal .eventos-map #adminMap {
+        min-height: 350px !important;
+    }
+}
+
+/* Estilos para filas de solicitudes pendientes */
+tr.pending-request {
+  background-color: #fef3c7 !important; /* Amarillo claro */
+  border-left: 4px solid #f59e0b !important; /* Borde naranja */
+}
+
+tr.pending-request td {
+  color: #1e293b !important; /* Texto oscuro para contraste */
+}
+
+tr.pending-request td strong {
+  color: #0f172a !important; /* Negritas oscuras */
+}
+
+/* Estilos para Pestañas de Reservas */
+.tabs-container {
+    display: flex;
+    gap: 20px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px 8px 0 0;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.badge-count {
+    background: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Ajuste para el input de búsqueda en el header oscuro */
+#searchReservationInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+#searchReservationInput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ====== Mejoras Responsive Adicionales ====== */
+
+@media (max-width: 768px) {
+  /* Header: Stack title and search */
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  #searchReservationInput {
+    width: 100% !important;
+    flex: 1;
+  }
+
+  /* Tabs: Allow horizontal scroll */
+  .tabs-container {
+    overflow-x: auto;
+    padding-bottom: 5px;
+    width: 100%;
+    justify-content: flex-start;
+    /* Hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .tabs-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  /* Sidebar: Compact links */
+  .sidebar {
+    padding: 10px;
+  }
+  .sidebar a {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  .sidebar a span {
+    display: none; /* Hide text on very small screens if needed, or keep scrolling */
+  }
+  /* Actually, let's keep text but ensure scroll works well */
+  .sidebar a span { display: inline; } 
+
+  /* Modals: Full screen on mobile */
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-content .venue-form {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Tables: Ensure container scrolls */
+  .section {
+    padding: 10px;
+    border-radius: 0;
+    border: none;
+  }
+  
+  /* Adjust buttons in tables */
+  .btn.small {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Sidebar adjustments for very small screens */
+  .sidebar a {
+    font-size: 0.65rem;
+    padding: 6px 2px;
+  }
+  .sidebar a i {
+    font-size: 1.1rem;
+  }
+  
+  .section-title {
+    font-size: 1.4rem;
+  }
+}
+
+
+/* --- TOAST NOTIFICATIONS --- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    min-width: 300px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease forwards;
+    border-left: 5px solid #3b82f6;
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+@keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateX(100%); }
+}
+
+.toast.success { border-left-color: #10b981; }
+.toast.success i { color: #10b981; }
+
+.toast.error { border-left-color: #ef4444; }
+.toast.error i { color: #ef4444; }
+
+.toast.warning { border-left-color: #f59e0b; }
+.toast.warning i { color: #f59e0b; }
+
+.toast.info { border-left-color: #3b82f6; }
+.toast.info i { color: #3b82f6; }
+
+.toast-message {
+    font-size: 0.95rem;
+    color: #334155;
+    font-weight: 500;
+}
+

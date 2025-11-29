@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva Eventos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/formulario.css">
+  <script>
+    // Check session status
+    let APP_CURRENT_USER = null;
+    fetch('api/api.php?action=get_current_user_full')
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Not logged in');
+      })
+      .then(user => {
+        if (user.rol === 'admin') {
+          window.location.href = 'administrador.html';
+        } else {
+          APP_CURRENT_USER = user;
+          document.body.classList.remove('hidden-body');
+          
+          // --- VALIDACIÓN DE DATOS FALTANTES (GOOGLE) ---
+          if (!user.telefono || user.telefono.trim() === '') {
+              setTimeout(() => {
+                  const modal = document.getElementById('alertModal');
+                  const msgEl = document.getElementById('alertMessage');
+                  const btn = document.getElementById('alertBtn');
+                  
+                  if (modal && msgEl && btn) {
+                      msgEl.innerHTML = '<strong>¡Bienvenido!</strong><br>Para poder gestionar tus reservas y contactarte en caso de cambios, necesitamos que registres tu número de teléfono.';
+                      modal.classList.remove('hidden');
+                      
+                      btn.onclick = () => {
+                          modal.classList.add('hidden');
+                          // Abrir modal de cuenta
+                          const accountModal = document.getElementById('accountModal');
+                          if (accountModal) {
+                              // Pre-llenar el nombre para que no parezca que se pide de nuevo
+                              const nameInput = document.getElementById('profileName');
+                              if (nameInput) nameInput.value = user.nombre || '';
+
+                              accountModal.classList.remove('hidden');
+                              // Enfocar input
+                              const phoneInput = document.getElementById('profilePhone');
+                              if (phoneInput) phoneInput.focus();
+                          }
+                      };
+                  }
+              }, 1000);
+          }
+        }
+      })
+      .catch(() => {
+        window.location.href = 'index.html';
+      });
+  </script>
+  <style>
+    .hidden-body { display: none; }
+  </style>
+</head>
+<body class="hidden-body">
+  
+  <header class="topbar-header">
+    <div class="topbar-left">
+      <button id="openAccountBtn" class="btn small"><i class="fas fa-user-circle"></i> <span>Mi Cuenta</span></button>
+      <button id="openReservationsBtn" class="btn small"><i class="fas fa-list-alt"></i> <span>Mis reservas</span></button>
+      <button id="openReportBtn" class="btn small"><i class="fas fa-flag"></i> <span>Reportar</span></button>
+      <button id="openNotificationsBtn" class="btn small" title="Notificaciones">
+        <i class="fas fa-bell"></i>
+        <span id="notificationsBadge" class="badge hidden">0</span>
+      </button>
+    </div>
+ 
+    <div class="topbar-right">
+      <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span></button>
+    </div>
+  </header>
+
+  <div id="reservationsModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-list-alt"></i> Mis Solicitudes</h3>
+        <button id="closeReservationsBtn" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="active-requests">Solicitudes Activas</button>
+        <button class="tab-btn" data-tab="history-requests">Historial</button>
+      </div>
+
+      <div class="tab-content active" id="tab-active-requests">
+        <div id="reservationsListActive" class="modal-list-container"></div>
+      </div>
+
+      <div class="tab-content" id="tab-history-requests">
+        <div id="reservationsListHistory" class="modal-list-container"></div>
+      </div>
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+
+  <div id="accountModal" class="modal hidden">
+    <div class="modal-content large-modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-user-circle"></i> Mi Cuenta</h3>
+        <button id="closeAccountBtn" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="profile">Perfil</button>
+        <button class="tab-btn" data-tab="security">Seguridad</button>
+      </div>
+
+      <div class="tab-content active" id="tab-profile">
+        <form id="profileForm" class="account-form">
+            <div class="form-group">
+                <label for="profileName">Nombre completo</label>
+                <input type="text" id="profileName" required>
+            </div>
+            <div class="form-group">
+                <label for="profilePhone">Teléfono</label>
+                <div class="phone-input">
+                    <span class="prefix">+56 9</span>
+                    <input id="profilePhone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="btn">Guardar Perfil</button>
+            </div>
+            <div id="profileMsg" class="msg"></div>
+        </form>
+      </div>
+
+      <div class="tab-content" id="tab-security">
+        <form id="securityForm" class="account-form">
+            <div class="form-group">
+                <label for="newPassword">Nueva Contraseña</label>
+                <input type="password" id="newPassword" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                <input type="password" id="confirmPassword" required minlength="6">
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="btn">Cambiar Contraseña</button>
+            </div>
+            <div id="securityMsg" class="msg"></div>
+        </form>
+      </div>
+
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+  
+  <div id="main-container" style="display: flex; height: calc(100vh - 70px); overflow: hidden;">
+      
+      <!-- 1. FILTROS (Izquierda) -->
+      <div class="filters-sidebar" style="width: 280px; padding: 20px; background: #fff; border-right: 1px solid #eee; overflow-y: auto;">
+          <h3 style="margin-top: 0; color: var(--blue);"><i class="fas fa-filter"></i> Filtros</h3>
+          
+          <div class="form-group">
+              <label>Capacidad mínima</label>
+              <input type="number" id="filterCapacidad" placeholder="Ej: 50" min="1">
+          </div>
+          
+          <div class="form-group">
+              <label>Precio Base Máx.</label>
+              <input type="number" id="filterPrecioBase" placeholder="$">
+          </div>
+
+          <div class="form-group">
+              <label>Precio/Persona Máx.</label>
+              <input type="number" id="filterPrecioPersona" placeholder="$">
+          </div>
+
+          <div style="display: flex; gap: 5px; margin-top: 15px;">
+              <button onclick="filterVenues()" class="btn primary" style="flex: 1;">Filtrar</button>
+              <button onclick="resetFilters()" class="btn secondary" title="Limpiar"><i class="fas fa-undo"></i></button>
+          </div>
+      </div>
+
+      <!-- 2. LISTA DE LUGARES (Centro) -->
+      <div class="venues-list-container" style="width: 320px; background: #f8fafc; overflow-y: auto; border-right: 1px solid #eee;">
+          <div id="venuesList" style="padding: 15px;">
+              <!-- Se llena con JS -->
+          </div>
+      </div>
+
+      <!-- 3. MAPA (Derecha - Ocupa el resto) -->
+      <div class="map-container" style="flex: 1; position: relative;">
+          
+          <!-- Buscador Flotante en Mapa -->
+          <div class="map-search-container">
+            <div class="map-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchName" placeholder="Buscar lugar por nombre..." oninput="filterVenues()">
+            </div>
+          </div>
+
+          <div id="map" style="width: 100%; height: 100%;"></div>
+      </div>
+  </div>
+
+  <!-- MODAL DE DETALLES DEL LUGAR -->
+  <div id="venueDetailsModal" class="modal hidden" style="z-index: 2000;">
+      <div class="modal-content venue-details-content">
+          
+          <!-- Encabezado con Imagen Grande (Hero Image) -->
+          <div class="venue-hero">
+              <div id="detailCarousel" class="venue-carousel">
+                  <!-- Las imágenes se inyectan aquí -->
+                  <img id="detailImage" src="" alt="Lugar">
+              </div>
+              
+              <!-- Controles del carrusel -->
+              <button onclick="scrollCarousel(-1)" class="carousel-control prev">&#10094;</button>
+              <button onclick="scrollCarousel(1)" class="carousel-control next">&#10095;</button>
+              
+              <button onclick="closeDetailsModal()" class="close-btn-overlay">&times;</button>
+          </div>
+
+          <div class="venue-details-body">
+              <div class="venue-header-row">
+                  <div class="venue-title-block">
+                      <h2 id="detailName">Nombre del Lugar</h2>
+                      <p id="detailAddress"><i class="fas fa-map-marker-alt"></i> Dirección...</p>
+                  </div>
+                  <div class="venue-price-block">
+                      <div class="price-base">$<span id="detailPrice">0</span></div>
+                      <small>Precio Base</small>
+                      <div class="price-person">$<span id="detailPersonPrice">0</span></div>
+                      <small>Precio p/P</small>
+                  </div>
+              </div>
+
+              <!-- Badges de Capacidad y Estado -->
+              <div class="venue-badges">
+                  <span class="badge-capacity">
+                      <i class="fas fa-users"></i> <span id="detailCapacity">0</span> Personas
+                  </span>
+                  <span id="detailStatus" class="badge-status">Disponible</span>
+              </div>
+
+              <hr class="venue-divider">
+
+              <div class="venue-info-grid">
+                  <!-- Columna Izquierda: Descripción -->
+                  <div class="venue-description">
+                      <h3>Sobre este lugar</h3>
+                      <p id="detailDescription">
+                          Descripción detallada del lugar...
+                      </p>
+                  </div>
+
+                  <!-- Columna Derecha: Servicios -->
+                  <div class="venue-services">
+                      <h3>Lo que ofrece</h3>
+                      <ul id="detailServices">
+                          <!-- Se llena con JS -->
+                      </ul>
+                  </div>
+              </div>
+
+              <div class="venue-footer-actions">
+                  <button onclick="closeDetailsModal()" class="btn secondary">Cerrar</button>
+                  <button id="detailActionBtn" class="btn primary">Reservar Ahora</button>
+              </div>
+          </div>
+      </div>
+      <div class="modal-backdrop"></div>
+  </div>
+
+  <!-- LIGHTBOX PARA IMÁGENES (Zoom) -->
+  <div id="imageLightbox" class="modal hidden" style="z-index: 2000; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center;">
+      <button onclick="closeLightbox()" style="position: absolute; top: 20px; right: 30px; background: transparent; border: none; color: white; font-size: 40px; cursor: pointer; z-index: 2001;">&times;</button>
+      <img id="lightboxImage" src="" style="max-width: 90%; max-height: 90vh; object-fit: contain; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+  </div>
+
+  <!-- MODAL DE RESERVA (Oculto por defecto) -->
+  <div id="bookingModal" class="modal hidden">
+      <div class="modal-content" style="max-width: 500px;">
+          <div class="modal-header">
+              <h3>Reservar: <span id="modalVenueName" style="color: var(--blue);"></span></h3>
+              <button onclick="closeBookingModal()" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+              <form id="reservationForm">
+                  <input type="hidden" id="venueId">
+                  
+                  <div class="form-group">
+                      <label>Fecha del Evento</label>
+                      <input type="date" id="fecha" required>
+                  </div>
+
+                  <div class="form-group">
+                      <label>Duración (Días)</label>
+                      <input type="number" id="duracion" value="1" min="1" max="7" required oninput="calculateTotal()">
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Hora del Evento</label>
+                      <input type="time" id="hora" required>
+                  </div>
+
+                  <div class="form-group">
+                      <label>Tipo de Evento</label>
+                      <select id="tipoEvento" required>
+                          <option value="">Seleccione...</option>
+                          <option value="Boda">Boda</option>
+                          <option value="Cumpleaños">Cumpleaños</option>
+                          <option value="Conferencia">Conferencia</option>
+                          <option value="Graduación">Graduación</option>
+                          <option value="Aniversario">Aniversario</option>
+                          <option value="Otro">Otro</option>
+                      </select>
+                  </div>
+
+                  <div class="form-group">
+                      <label>Cantidad de Invitados</label>
+                      <input type="number" id="invitados" required min="1" oninput="calculateTotal()">
+                      <div id="capacityError" style="color: red; font-size: 0.85rem; display: none;"></div>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Solicitudes Especiales</label>
+                      <textarea id="specialRequests" rows="2"></textarea>
+                  </div>
+
+                  <div class="summary-box" style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                      <p><strong>Precio Base:</strong> $<span id="summaryBase">0</span></p>
+                      <p><strong>Por Persona:</strong> $<span id="summaryPersona">0</span> x <span id="summaryCount">0</span></p>
+                      <hr style="margin: 10px 0; border-color: #cbd5e1;">
+                      <p style="font-size: 1.2em; color: var(--blue);"><strong>Total Estimado: $<span id="summaryTotal">0</span></strong></p>
+                  </div>
+
+                  <button type="submit" class="btn primary" style="width: 100%; margin-top: 20px;">Confirmar Solicitud</button>
+              </form>
+          </div>
+      </div>
+      <div class="modal-backdrop"></div>
+  </div>
+
+  <div id="reportModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-flag"></i> Reportar Incidencia / Comentario</h3>
+        <button id="closeReportBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="report-form-container">
+        <div class="form-group">
+          <label for="reportType">Tipo de reporte</label>
+          <select id="reportType" class="full-width">
+              <option value="">-- Selecciona un tipo --</option>
+              <option value="reserva">Problema con mi reserva</option>
+              <option value="tecnico">Problema técnico de la web</option>
+              <option value="lugar">Problema con un lugar</option>
+              <option value="otro">Otro comentario</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reportMessage">Describe el motivo</label>
+          <textarea id="reportMessage" rows="5" placeholder="Escribe aquí tu reporte..." class="full-width"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button id="sendReportBtn" class="btn">Enviar reporte</button>
+          <button id="cancelReportBtn" class="btn secondary">Cancelar</button>
+        </div>
+        <div id="reportMsg" class="msg"></div>
+      </div>
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+  
+  <div id="notificationsModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+        <button id="closeNotificationsBtn" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="active-notifications">Activas</button>
+        <button class="tab-btn" data-tab="history-notifications">Historial</button>
+      </div>
+
+      <div class="tab-content active" id="tab-active-notifications">
+        <div id="notificationsListActive" class="modal-list-container"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+            <button id="markAllReadBtn" class="btn small">Marcar todo leído</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-history-notifications">
+        <div id="notificationsListHistory" class="modal-list-container"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+            <button id="clearAllBtn" class="btn secondary small">Eliminar todo</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+
+  <!-- Modal de Alerta Genérico -->
+  <div id="alertModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+      <div class="modal-header" style="border:none; padding-bottom:0; justify-content: center;">
+        <h3 style="margin:0; color: var(--blue);"><i class="fas fa-info-circle"></i> Atención</h3>
+      </div>
+      <p id="alertMessage" style="margin: 20px 0; color: #4b5563; font-size: 1.05rem; line-height: 1.5;"></p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button id="alertBtn" class="btn primary" style="min-width: 120px;">Entendido</button>
+      </div>
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+
+  <!-- Modal de Confirmación Genérico -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+      <div class="modal-header" style="border:none; padding-bottom:0; justify-content: center;">
+        <h3 style="margin:0;"><i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Confirmar Acción</h3>
+      </div>
+      <p id="confirmMessage" style="margin: 20px 0; color: #4b5563;">¿Estás seguro de realizar esta acción?</p>
+      <div class="modal-actions" style="justify-content:center; gap: 10px;">
+        <button id="confirmBtn" class="btn" style="background: #ef4444; color: white;">Sí, confirmar</button>
+        <button id="cancelConfirmBtn" class="btn secondary">Cancelar</button>
+      </div>
+    </div>
+    <div class="modal-backdrop"></div>
+  </div>
+
+  <!-- Contenedor de Toasts -->
+  <div id="toast-container"></div>
+
+  <script src="js/toast.js"></script>
+  <script src="js/formulario.js"></script>
+
+  <script>
+    function handleMapError() {
+      console.error('Error al cargar Google Maps');
+      const mapDiv = document.getElementById('map');
+      if (mapDiv) {
+        mapDiv.innerHTML = '<div style="text-align:center;padding:20px;">Error al cargar el mapa. Por favor, recarga la página.</div>';
+      }
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC59R63rSWzCG9hIV3chuKsprNPZSODL1U&libraries=places&callback=initMap" 
+    async 
+    defer
+    onerror="handleMapError()"></script>
+    
+  <script>
+    // Wait for APP_CURRENT_USER to be set
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkUser = setInterval(() => {
+            if (typeof APP_CURRENT_USER !== 'undefined' && APP_CURRENT_USER !== null) {
+                clearInterval(checkUser);
+                // Trigger any initialization that depends on APP_CURRENT_USER if needed
+                // For example, pre-fill form fields if they are empty
+                if(document.getElementById('name') && !document.getElementById('name').value) {
+                    document.getElementById('name').value = APP_CURRENT_USER.nombre;
+                }
+                if(document.getElementById('email') && !document.getElementById('email').value) {
+                    document.getElementById('email').value = APP_CURRENT_USER.email;
+                }
+                if(document.getElementById('phone') && !document.getElementById('phone').value) {
+                    // Remove +56 9 prefix if present in DB to avoid duplication in display
+                    let phone = APP_CURRENT_USER.telefono || '';
+                    phone = phone.replace('+56 9 ', '').replace('+569', '').trim();
+                    document.getElementById('phone').value = phone;
+                }
+            }
+        }, 100);
+    });
+  </script>
+
+  </body>
+</html>

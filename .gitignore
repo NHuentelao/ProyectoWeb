@@ -1,0 +1,16 @@
+# Dependencias
+/vendor/
+/node_modules/
+
+# Archivos de sistema y entorno
+.env
+.DS_Store
+Thumbs.db
+
+# Archivos subidos (las imágenes locales no deberían ir al repo de producción si son de prueba)
+/uploads/*
+!/uploads/.gitkeep
+!/uploads/venues/.gitkeep
+
+# Logs
+*.log

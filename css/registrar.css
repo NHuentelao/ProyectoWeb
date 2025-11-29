@@ -1,0 +1,169 @@
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --blue-light: #3b82f6;
+  --gray: #6b7280;
+  --gray-light: #f3f4f6;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.box {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.box h2 {
+  color: var(--blue);
+  margin: 0 0 32px;
+  font-size: 1.75rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.box label {
+  display: block;
+  margin-top: 12px;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.box input,
+.phone-input input {
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--gray-light);
+  margin-top: 6px;
+}
+
+.box input:focus,
+.phone-input input:focus {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: white;
+}
+
+.phone-input {
+  position: relative;
+  margin-top: 6px;
+}
+
+.phone-input .prefix {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #374151;
+  font-size: 0.95rem;
+  z-index: 1;
+}
+
+.phone-input input {
+  padding-left: 68px !important;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+}
+
+.msg {
+  min-height: 24px;
+  color: var(--error);
+  font-size: 0.9rem;
+  margin-top: 12px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.center-note {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.95rem;
+}
+
+.center-note a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.center-note a:hover {
+  color: var(--blue-dark);
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .box {
+    padding: 32px 24px;
+    margin: 20px;
+  }
+
+  .box h2 {
+    font-size: 1.5rem;
+  }
+
+  .box input,
+  .phone-input input {
+    padding: 14px 14px 14px 44px;
+  }
+
+  .phone-input .prefix {
+    left: 14px;
+  }
+}
