@@ -50,19 +50,17 @@ Render necesita que tu código esté en un repositorio de GitHub (o GitLab).
 
 5. Haz clic en **Create Web Service**.
 
-## 5. Importar la Base de Datos (Método Fácil)
+## 5. Importar la Base de Datos (Método Navegador - ¡El más fácil!)
 
-Una vez que tu Web Service esté desplegado (verás un check verde en Render), sigue estos pasos para crear las tablas automáticamente:
+Si no puedes usar la Shell, puedes ejecutar el script de instalación visitando una URL en tu navegador.
 
-1. En el dashboard de Render, ve a tu **Web Service**.
-2. Haz clic en la pestaña **Shell** (a la izquierda, debajo de "Logs").
-3. Espera a que aparezca la terminal y escribe el siguiente comando:
-   ```bash
-   php setup_db.php
-   ```
-4. Si todo sale bien, verás un mensaje de "¡ÉXITO!".
+1. Espera a que tu servicio esté **Live** (con el check verde).
+2. Abre una nueva pestaña en tu navegador.
+3. Escribe la URL de tu proyecto seguida de `/setup_db.php`.
+   Ejemplo: `https://reservas-lebu.onrender.com/setup_db.php`
+4. Verás un registro en pantalla. Si dice **"¡ÉXITO!"**, tus tablas ya están creadas.
 
-*Nota: Este script (`setup_db.php`) lee el archivo `schema_postgres.sql` y crea las tablas por ti, ahorrándote tener que instalar programas externos.*
+*Nota: Por seguridad, una vez que hayas confirmado que funciona, es recomendable borrar el archivo `setup_db.php` de tu repositorio y volver a subir los cambios, para que nadie más pueda intentar reinstalar la base de datos.*
 
 ## 6. Verificar
 
