@@ -1,6 +1,7 @@
 <?php
 // Configuración de la base de datos
 // Intenta obtener variables de entorno (Render), si no existen usa valores por defecto (Local/XAMPP)
+// Updated: Fix JSON response issues
 
 $host = getenv('DB_HOST') ?: 'localhost';
 $db   = getenv('DB_NAME') ?: 'reservas_lebu';

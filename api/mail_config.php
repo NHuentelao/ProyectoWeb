@@ -2,6 +2,7 @@
 // api/mail_config.php
 // Configuración para envío de correos vía API (Brevo/Sendinblue)
 // Esto evita los bloqueos de puertos SMTP (587/465) en Render.
+// Updated: Fix JSON response issues
 
 function send_email($to, $subject, $body) {
     // 1. Obtener credenciales de variables de entorno
