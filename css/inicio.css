@@ -1220,6 +1220,7 @@ body.login-open .auth{
   .map-column {
     width: 100%;
     order: -1; /* Mapa primero en móvil */
+    min-width: 0 !important; /* Forzar anulación de min-width base */
   }
   #map {
     height: 500px;

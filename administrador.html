@@ -190,13 +190,13 @@
                     </div>
         
                     <div class="form-group">
-                      <label for="venue-images">Galería de Imágenes</label>
-                      <input type="file" id="venue-images" accept="image/*" multiple>
-                      <small style="color: #666;">Puedes seleccionar varias imágenes a la vez.</small>
+                      <label for="venue-images">URL de la Imagen</label>
+                      <input type="url" id="venue-images" placeholder="https://ejemplo.com/imagen.jpg">
+                      <small style="color: #666;">Pega aquí el enlace directo de la imagen (ej: Imgur, Postimages).</small>
                       
-                      <!-- Contenedor para galería existente -->
+                      <!-- Contenedor para vista previa -->
                       <div id="gallery-preview-container" style="margin-top: 10px; display: none;">
-                          <p style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Galería actual:</p>
+                          <p style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Vista previa:</p>
                           <div id="gallery-preview" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                       </div>
                     </div>

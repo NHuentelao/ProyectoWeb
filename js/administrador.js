@@ -1135,8 +1135,8 @@ function editVenue(index) {
 
     document.getElementById('venue-services').value = venue.servicios || '';
     
-    // El input file no se puede establecer, limpiarlo
-    document.getElementById('venue-images').value = ''; 
+    // Establecer URL de imagen
+    document.getElementById('venue-images').value = venue.imagen_url || ''; 
     
     document.getElementById('venue-lat').value = venue.lat;
     document.getElementById('venue-lng').value = venue.lng;
@@ -1144,28 +1144,10 @@ function editVenue(index) {
     document.getElementById('venue-base-price').value = venue.precio_base || '';
     document.getElementById('venue-price-per-guest').value = venue.precio_por_persona || '';
     
-    // Manejar vista previa de galería
-    const galleryContainer = document.getElementById('gallery-preview-container');
-    const galleryPreview = document.getElementById('gallery-preview');
-    galleryPreview.innerHTML = '';
-
-    if (venue.galeria && venue.galeria.length > 0) {
-        galleryContainer.style.display = 'block';
-        venue.galeria.forEach(img => {
-            const div = document.createElement('div');
-            div.style.position = 'relative';
-            div.innerHTML = `
-                <img src="${img.imagen_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                <button onclick="deleteVenueImage(${img.id}, ${index})" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px;">&times;</button>
-            `;
-            galleryPreview.appendChild(div);
-        });
-    } else if (venue.imagen_url) {
-        // Compatibilidad con imagen antigua única si no hay galería
-        galleryContainer.style.display = 'block';
-        galleryPreview.innerHTML = `<img src="${venue.imagen_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">`;
-    } else {
-        galleryContainer.style.display = 'none';
+    // Trigger input event to show preview
+    const imageInput = document.getElementById('venue-images');
+    if (imageInput) {
+        imageInput.dispatchEvent(new Event('input'));
     }
 
     adminMap.setCenter({ lat: parseFloat(venue.lat), lng: parseFloat(venue.lng) });
@@ -1336,43 +1318,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listener del formulario de VENUES (Lugares)
     const venueForm = document.getElementById('venueForm');
     if (venueForm) {
-        // Manejo de vista previa de imagen (Galería)
+        // Manejo de vista previa de imagen (URL)
         const imageInput = document.getElementById('venue-images');
         const galleryContainer = document.getElementById('gallery-preview-container');
         const galleryPreview = document.getElementById('gallery-preview');
 
-        // Vista previa de imágenes seleccionadas
+        // Vista previa de URL
         if (imageInput) {
-            imageInput.addEventListener('change', function() {
-                // Si estamos editando, no borrar las existentes, solo agregar visualmente las nuevas
-                // Pero para simplificar, mostraremos las nuevas en un contenedor separado o limpiaremos si no es edición
+            imageInput.addEventListener('input', function() {
+                const url = this.value.trim();
+                galleryPreview.innerHTML = '';
                 
-                // Si no estamos editando (selectedVenueIndex es null), limpiar preview
-                if (selectedVenueIndex === null) {
-                    galleryPreview.innerHTML = '';
-                    galleryContainer.style.display = 'none';
-                }
-
-                const files = this.files;
-                if (files.length > 0) {
+                if (url) {
                     galleryContainer.style.display = 'block';
-                    
-                    // Crear un contenedor temporal para las nuevas si ya hay existentes
-                    // O simplemente agregarlas al final
-                    
-                    Array.from(files).forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const div = document.createElement('div');
-                            div.style.position = 'relative';
-                            div.innerHTML = `
-                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #3b82f6;">
-                                <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #3b82f6;">Nueva</span>
-                            `;
-                            galleryPreview.appendChild(div);
-                        }
-                        reader.readAsDataURL(file);
-                    });
+                    const div = document.createElement('div');
+                    div.style.position = 'relative';
+                    div.innerHTML = `
+                        <img src="${url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #3b82f6;" onerror="this.src='https://via.placeholder.com/100?text=Error'">
+                        <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #3b82f6;">Vista Previa</span>
+                    `;
+                    galleryPreview.appendChild(div);
+                } else {
+                    galleryContainer.style.display = 'none';
                 }
             });
         }
@@ -1399,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const capacity = document.getElementById('venue-capacity').value.trim();
             const basePrice = document.getElementById('venue-base-price').value.trim();
             const pricePerGuest = document.getElementById('venue-price-per-guest').value.trim();
-            const imageFiles = document.getElementById('venue-images').files;
+            const imageUrl = document.getElementById('venue-images').value.trim();
 
             if (!name || !address || !isFinite(lat) || !isFinite(lng)) {
                 venueMsg.textContent = 'Nombre, Dirección y Ubicación en mapa son requeridos.';
@@ -1427,12 +1394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('capacity', capacity);
             formData.append('basePrice', basePrice);
             formData.append('pricePerGuest', pricePerGuest);
-            
-            if (imageFiles.length > 0) {
-                for (let i = 0; i < imageFiles.length; i++) {
-                    formData.append('images[]', imageFiles[i]);
-                }
-            }
+            formData.append('image_url', imageUrl);
             
             if (venue_id) {
                 formData.append('id', venue_id);

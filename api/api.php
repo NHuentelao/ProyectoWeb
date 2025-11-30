@@ -466,6 +466,7 @@ try {
             $pricePerGuest = $_POST['pricePerGuest'] ?? 0;
             $description = $_POST['description'] ?? '';
             $services = $_POST['services'] ?? '';
+            $image_url = $_POST['image_url'] ?? '';
 
             // Campos de dueño
             $owner_name = $_POST['owner_name'] ?? '';
@@ -474,50 +475,20 @@ try {
 
             // 1. Guardar/Actualizar Lugar
             if ($venue_id) {
-                $stmt = $pdo->prepare("UPDATE lugares SET nombre = ?, direccion = ?, lat = ?, lng = ?, capacidad = ?, precio_base = ?, precio_por_persona = ?, descripcion = ?, servicios = ?, owner_nombre = ?, owner_telefono = ?, owner_email = ? WHERE id = ?");
-                $stmt->execute([$name, $address, $lat, $lng, $capacity, $basePrice, $pricePerGuest, $description, $services, $owner_name, $owner_phone, $owner_email, $venue_id]);
+                $stmt = $pdo->prepare("UPDATE lugares SET nombre = ?, direccion = ?, lat = ?, lng = ?, capacidad = ?, precio_base = ?, precio_por_persona = ?, descripcion = ?, servicios = ?, owner_nombre = ?, owner_telefono = ?, owner_email = ?, imagen_url = ? WHERE id = ?");
+                $stmt->execute([$name, $address, $lat, $lng, $capacity, $basePrice, $pricePerGuest, $description, $services, $owner_name, $owner_phone, $owner_email, $image_url, $venue_id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO lugares (nombre, direccion, lat, lng, capacidad, precio_base, precio_por_persona, descripcion, servicios, owner_nombre, owner_telefono, owner_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $address, $lat, $lng, $capacity, $basePrice, $pricePerGuest, $description, $services, $owner_name, $owner_phone, $owner_email]);
+                $stmt = $pdo->prepare("INSERT INTO lugares (nombre, direccion, lat, lng, capacidad, precio_base, precio_por_persona, descripcion, servicios, owner_nombre, owner_telefono, owner_email, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $address, $lat, $lng, $capacity, $basePrice, $pricePerGuest, $description, $services, $owner_name, $owner_phone, $owner_email, $image_url]);
                 $venue_id = $pdo->lastInsertId();
             }
 
-            // 2. Manejo de Galería (Múltiples imágenes)
+            // 2. Manejo de Galería (Múltiples imágenes) - DESACTIVADO EN FAVOR DE URL EXTERNA
+            /*
             if (isset($_FILES['images'])) {
-                $uploadDir = '../uploads/venues/';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-                $files = $_FILES['images'];
-                $count = count($files['name']);
-
-                for ($i = 0; $i < $count; $i++) {
-                    if ($files['error'][$i] === UPLOAD_ERR_OK) {
-                        $tmpName = $files['tmp_name'][$i];
-                        $fileName = $files['name'][$i];
-                        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                        
-                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
-                            $newFileName = md5(time() . $fileName . $i) . '.' . $ext;
-                            $destPath = $uploadDir . $newFileName;
-                            
-                            if (move_uploaded_file($tmpName, $destPath)) {
-                                $webPath = 'uploads/venues/' . $newFileName;
-                                
-                                // Insertar en galeria_lugares
-                                $stmt = $pdo->prepare("INSERT INTO galeria_lugares (id_lugar, imagen_url) VALUES (?, ?)");
-                                $stmt->execute([$venue_id, $webPath]);
-                                
-                                // ACTUALIZACIÓN: Si es la primera imagen del lote, forzar actualización de la imagen principal
-                                // Esto asegura que la imagen del mapa/tarjeta coincida con la nueva subida
-                                if ($i === 0) {
-                                    $stmtUpd = $pdo->prepare("UPDATE lugares SET imagen_url = ? WHERE id = ?");
-                                    $stmtUpd->execute([$webPath, $venue_id]);
-                                }
-                            }
-                        }
-                    }
-                }
+                // ... (código anterior de subida de archivos) ...
             }
+            */
             
             send_json(['success' => true]);
             break;
