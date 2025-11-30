@@ -15,6 +15,12 @@ function send_email($to, $subject, $body) {
         return false;
     }
 
+    // Validación de tipo de clave (Evitar error común de usar clave SMTP)
+    if (strpos($apiKey, 'xsmt') === 0) {
+        error_log("CRITICAL EMAIL ERROR: Se detectó una clave SMTP ('xsmt...') en EMAIL_API_KEY. Se requiere una API Key ('xkeysib...').");
+        return false;
+    }
+
     // 2. Configurar la petición a la API de Brevo
     $url = 'https://api.brevo.com/v3/smtp/email';
     
