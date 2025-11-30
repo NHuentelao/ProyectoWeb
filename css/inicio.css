@@ -783,6 +783,7 @@ body.login-open .auth{
 
 @media (max-width: 768px) {
   .site-header { padding: 10px 15px; }
+  .site-header.scrolled { padding: 8px 15px; }
   .site-title { font-size: 1.1rem; }
   
   .header-login-btn {
