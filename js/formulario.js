@@ -687,7 +687,7 @@ async function markNotificationAsRead(notificationId) {
     try {
         await apiFetch('mark_notification_read', { method: 'POST', body: { id: notificationId } });
         await renderNotifications();
-    } catch (error) { showToast('Error al marcar como leída.', 'error'); }
+    } catch (error) { showToast(error.message || 'Error al marcar como leída.', 'error'); }
 }
 window.markNotificationAsRead = markNotificationAsRead;
 
@@ -704,7 +704,7 @@ async function markAllNotificationsRead() {
         await renderNotifications();
     } catch (error) { 
         console.error(error);
-        showToast('Error al marcar todas como leídas.', 'error'); 
+        showToast(error.message || 'Error al marcar todas como leídas.', 'error'); 
     }
 }
 

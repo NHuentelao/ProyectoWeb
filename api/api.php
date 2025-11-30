@@ -988,7 +988,7 @@ try {
         case 'mark_request_read': // (User)
             $user_id = get_session_user_id();
             $id = $data['id'] ?? 0;
-            $stmt = $pdo->prepare("UPDATE solicitudes SET leido_por_usuario = 1 WHERE id = ? AND id_usuario = ?");
+            $stmt = $pdo->prepare("UPDATE solicitudes SET leido_por_usuario = TRUE WHERE id = ? AND id_usuario = ?");
             $stmt->execute([$id, $user_id]);
             send_json(['success' => true]);
             break;
@@ -1084,14 +1084,14 @@ try {
         case 'mark_notification_read': // (User)
             $user_id = get_session_user_id();
             $id = $data['id'] ?? 0;
-            $stmt = $pdo->prepare("UPDATE notificaciones SET leido = 1 WHERE id = ? AND id_usuario = ?");
+            $stmt = $pdo->prepare("UPDATE notificaciones SET leido = TRUE WHERE id = ? AND id_usuario = ?");
             $stmt->execute([$id, $user_id]);
             send_json(['success' => true]);
             break;
 
         case 'mark_all_notifications_read': // (User)
             $user_id = get_session_user_id();
-            $stmt = $pdo->prepare("UPDATE notificaciones SET leido = 1 WHERE id_usuario = ?");
+            $stmt = $pdo->prepare("UPDATE notificaciones SET leido = TRUE WHERE id_usuario = ?");
             $stmt->execute([$user_id]);
             send_json(['success' => true]);
             break;
@@ -1163,7 +1163,7 @@ try {
         case 'mark_message_read':
             check_admin();
             $id = $data['id'] ?? 0;
-            $stmt = $pdo->prepare("UPDATE contact_messages SET leido = 1 WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE contact_messages SET leido = TRUE WHERE id = ?");
             $stmt->execute([$id]);
             send_json(['success' => true]);
             break;
@@ -1187,7 +1187,7 @@ try {
                         $stmt = $pdo->prepare("UPDATE reportes SET status = 'resolved' WHERE id = ?");
                         $stmt->execute([$id]);
                     } else {
-                        $stmt = $pdo->prepare("UPDATE contact_messages SET leido = 1 WHERE id = ?");
+                        $stmt = $pdo->prepare("UPDATE contact_messages SET leido = TRUE WHERE id = ?");
                         $stmt->execute([$id]);
                     }
                 }
