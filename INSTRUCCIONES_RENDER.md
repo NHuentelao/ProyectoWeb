@@ -50,25 +50,19 @@ Render necesita que tu código esté en un repositorio de GitHub (o GitLab).
 
 5. Haz clic en **Create Web Service**.
 
-## 5. Importar la Base de Datos
+## 5. Importar la Base de Datos (Método Fácil)
 
-Una vez que tu base de datos esté corriendo, necesitas crear las tablas.
-1. En el dashboard de tu base de datos en Render, busca el botón **Connect** y luego **External Connection**.
-2. Copia el comando `PSQL Command` (necesitarás tener instalado PostgreSQL en tu PC para usar `psql` o usar una herramienta como DBeaver o pgAdmin).
-3. **Opción fácil (desde Render Shell):**
-   - Ve a tu **Web Service** en Render.
-   - Ve a la pestaña **Shell**.
-   - Espera a que conecte.
-   - Ejecuta el siguiente comando para cargar el esquema (asegúrate de que el despliegue haya terminado para que el archivo exista):
-     ```bash
-     php api/db.php # Esto solo prueba la conexión
-     ```
-   - Para importar el SQL, necesitarás instalar el cliente de postgres en el contenedor o hacerlo desde tu PC.
-   
-   **Mejor opción (desde tu PC con DBeaver/pgAdmin):**
-   - Conéctate a la base de datos usando la **External Database URL**.
-   - Abre el archivo `schema_postgres.sql` que creamos.
-   - Ejecuta el script SQL para crear las tablas.
+Una vez que tu Web Service esté desplegado (verás un check verde en Render), sigue estos pasos para crear las tablas automáticamente:
+
+1. En el dashboard de Render, ve a tu **Web Service**.
+2. Haz clic en la pestaña **Shell** (a la izquierda, debajo de "Logs").
+3. Espera a que aparezca la terminal y escribe el siguiente comando:
+   ```bash
+   php setup_db.php
+   ```
+4. Si todo sale bien, verás un mensaje de "¡ÉXITO!".
+
+*Nota: Este script (`setup_db.php`) lee el archivo `schema_postgres.sql` y crea las tablas por ti, ahorrándote tener que instalar programas externos.*
 
 ## 6. Verificar
 
