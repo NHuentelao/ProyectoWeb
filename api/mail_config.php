@@ -16,7 +16,8 @@ function send_email($to, $subject, $body) {
     }
 
     // Validación de tipo de clave (Evitar error común de usar clave SMTP)
-    if (strpos($apiKey, 'xsmt') === 0) {
+    // Asegurarse de que apiKey sea string antes de usar strpos
+    if (is_string($apiKey) && strpos($apiKey, 'xsmt') === 0) {
         error_log("CRITICAL EMAIL ERROR: Se detectó una clave SMTP ('xsmt...') en EMAIL_API_KEY. Se requiere una API Key ('xkeysib...').");
         return false;
     }
@@ -62,4 +63,3 @@ function send_email($to, $subject, $body) {
         return false;
     }
 }
-?>

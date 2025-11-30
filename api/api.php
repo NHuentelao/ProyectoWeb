@@ -1,4 +1,8 @@
 <?php
+// Desactivar la visualización de errores en la salida (para no romper el JSON)
+ini_set('display_errors', 0);
+error_reporting(E_ALL); // Aún registrar errores en el log
+
 // Iniciar la sesión en CADA solicitud de API
 session_start();
 

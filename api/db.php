@@ -41,4 +41,3 @@ try {
     echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos.']);
     exit;
 }
-?>
