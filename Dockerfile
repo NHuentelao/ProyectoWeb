@@ -1,17 +1,30 @@
 FROM php:8.2-apache
 
-# Instalar dependencias del sistema y extensiones de PHP para PostgreSQL
+# Instalar dependencias del sistema, extensiones de PHP y utilidades para Composer
 RUN apt-get update && apt-get install -y \
     libpq-dev \
+    unzip \
+    git \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Habilitar mod_rewrite de Apache (opcional pero recomendado)
+# Instalar Composer globalmente
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Habilitar mod_rewrite de Apache
 RUN a2enmod rewrite
 
-# Copiar el código fuente al directorio de trabajo del contenedor
+# Copiar el código fuente
 COPY . /var/www/html/
 
-# Establecer permisos correctos (Render a veces necesita esto)
+# Establecer directorio de trabajo
+WORKDIR /var/www/html/
+
+# Instalar dependencias de PHP (PHPMailer, etc.)
+# --no-dev: no instalar dependencias de desarrollo
+# --optimize-autoloader: optimizar la carga de clases
+RUN composer install --no-dev --optimize-autoloader
+
+# Establecer permisos correctos
 RUN chown -R www-data:www-data /var/www/html
 
 # Exponer el puerto 80
