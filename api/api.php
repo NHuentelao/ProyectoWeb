@@ -641,7 +641,18 @@ try {
                 send_json(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
             }
 
-            if (send_email($email, $subject, nl2br($message))) {
+            // Intentar obtener nombre del usuario por email
+            $recipient_name = "Usuario";
+            $stmt = $pdo->prepare("SELECT nombre FROM usuarios WHERE email = ?");
+            $stmt->execute([$email]);
+            $res = $stmt->fetch();
+            if ($res && !empty($res['nombre'])) {
+                $recipient_name = $res['nombre'];
+            }
+
+            $full_message = "Hola $recipient_name,<br><br>" . nl2br($message) . "<br><br>Saludos,<br>ReservaNoble";
+
+            if (send_email($email, $subject, $full_message)) {
                 send_json(['success' => true, 'message' => 'Correo enviado correctamente.']);
             } else {
                 send_json(['success' => false, 'message' => 'Error al enviar el correo.']);
@@ -1180,7 +1191,26 @@ try {
                 send_json(['success' => false, 'message' => 'Email y mensaje son requeridos.']);
             }
 
-            if (send_email($email, $subject, nl2br($message))) {
+            // Intentar obtener el nombre para personalizar el saludo
+            $recipient_name = "Usuario";
+            if ($id) {
+                if ($type === 'contact') {
+                    $stmt = $pdo->prepare("SELECT nombre FROM contact_messages WHERE id = ?");
+                    $stmt->execute([$id]);
+                    $res = $stmt->fetch();
+                    if ($res && !empty($res['nombre'])) $recipient_name = $res['nombre'];
+                } elseif ($type === 'report') {
+                    $stmt = $pdo->prepare("SELECT u.nombre FROM reportes r JOIN usuarios u ON r.id_usuario = u.id WHERE r.id = ?");
+                    $stmt->execute([$id]);
+                    $res = $stmt->fetch();
+                    if ($res && !empty($res['nombre'])) $recipient_name = $res['nombre'];
+                }
+            }
+
+            // Construir mensaje con formato estándar
+            $full_message = "Hola $recipient_name,<br><br>" . nl2br($message) . "<br><br>Saludos,<br>ReservaNoble";
+
+            if (send_email($email, $subject, $full_message)) {
                 // Marcar como leído/respondido si se proporcionó ID
                 if ($id) {
                     if ($type === 'report') {
