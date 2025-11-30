@@ -640,6 +640,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (nav && nav.classList.contains('active')) {
                 nav.classList.remove('active');
             }
+
+            // Cerrar cuadro de login al navegar
+            document.body.classList.remove('login-open');
+            document.body.classList.add('login-closed');
         });
     });
 
