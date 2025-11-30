@@ -156,7 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = redirect; 
                     }
                 } else {
-                    msg.textContent = result.message || 'Error desconocido.';
+                    if (result.is_suspended) {
+                        document.getElementById('suspendedModal').classList.remove('hidden');
+                        msg.textContent = ''; // Limpiar mensaje de error en el form
+                    } else {
+                        msg.textContent = result.message || 'Error desconocido.';
+                    }
                     loginBtn.disabled = false;
                     btnText.textContent = 'Iniciar sesión';
                     spinner.classList.add('hidden');
@@ -178,6 +183,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const resendCodeBtn = document.getElementById('resendCodeBtn');
     const twoFactorMsg = document.getElementById('twoFactorMsg');
     const cancelTwoFactor = document.getElementById('cancelTwoFactor');
+
+    // Lógica de Modal Suspendido
+    const contactAdminBtn = document.getElementById('contactAdminBtn');
+    if (contactAdminBtn) {
+        contactAdminBtn.addEventListener('click', () => {
+            document.getElementById('suspendedModal').classList.add('hidden');
+            // Cerrar panel de login
+            document.body.classList.remove('login-open');
+            document.body.classList.add('login-closed');
+            
+            // Navegar a contacto
+            const contactLink = document.querySelector('a[href="#contacto-seccion"]');
+            if (contactLink) contactLink.click();
+        });
+    }
 
     window.sendTwoFactorCode = async function() {
         twoFactorMsg.textContent = 'Enviando código...';
@@ -302,7 +322,12 @@ window.handleGoogleSignIn = function(response) {
             if (redirect.endsWith('.php')) redirect = redirect.replace('.php', '.html');
             window.location.href = redirect;
         } else {
-            msg.textContent = result.message;
+            if (result.is_suspended) {
+                document.getElementById('suspendedModal').classList.remove('hidden');
+                msg.textContent = '';
+            } else {
+                msg.textContent = result.message;
+            }
         }
     })
     .catch(error => {

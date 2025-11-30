@@ -103,7 +103,11 @@ try {
             if ($user && $password_valid) {
                 // Verificar si el usuario está suspendido
                 if (isset($user['estado']) && $user['estado'] === 'suspendido') {
-                    send_json(['success' => false, 'message' => 'Tu cuenta ha sido suspendida. Contacta al administrador.']);
+                    send_json([
+                        'success' => false, 
+                        'is_suspended' => true,
+                        'message' => 'Tu cuenta ha sido suspendida. Contacta al administrador.'
+                    ]);
                 }
 
                 // Iniciar sesión directamente (2FA eliminado)
@@ -246,7 +250,11 @@ try {
             if ($user) {
                 // Verificar si el usuario está suspendido
                 if (isset($user['estado']) && $user['estado'] === 'suspendido') {
-                    send_json(['success' => false, 'message' => 'Tu cuenta ha sido suspendida. Contacta al administrador.']);
+                    send_json([
+                        'success' => false, 
+                        'is_suspended' => true,
+                        'message' => 'Tu cuenta ha sido suspendida. Contacta al administrador.'
+                    ]);
                 }
             } else {
                 // Crear nuevo usuario con Google
