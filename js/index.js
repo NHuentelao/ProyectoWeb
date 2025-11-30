@@ -433,7 +433,7 @@ function updateMapMarkers(venuesToShow) {
             <h3 style="margin:0 0 5px; font-size:1.1rem; color: #000;">${v.nombre}</h3>
             <div style="color:#666; margin-bottom:8px;">${v.direccion || ''}</div>
             <div style="margin-top:6px">
-                <a href="#" onclick="document.getElementById('headerLoginBtn').click(); return false;" class="btn small" style="background:#2563eb; color:white; padding:6px 12px; border-radius:4px; display:inline-block;">Inicia Sesión para Reservar</a>
+                <button onclick="openDetailsModal(${v.id})" class="btn small" style="background:#2563eb; color:white; padding:6px 12px; border-radius:4px; display:inline-block; border:none; cursor:pointer; width:100%;">Ver Detalles</button>
             </div>
         </div>`;
         
@@ -509,10 +509,10 @@ window.openDetailsModal = function(venueId) {
         servicesList.innerHTML += `<li style="margin-bottom: 8px; display: flex; align-items: center;"><i class="fas ${icon}" style="width: 25px; color: var(--blue); margin-right: 8px;"></i> ${s}</li>`;
     });
 
-    document.getElementById('detailActionBtn').onclick = function() {
-        closeDetailsModal();
-        document.getElementById('headerLoginBtn').click();
-    };
+    // document.getElementById('detailActionBtn').onclick = function() {
+    //     closeDetailsModal();
+    //     document.getElementById('headerLoginBtn').click();
+    // };
     document.getElementById('venueDetailsModal').classList.remove('hidden');
     document.getElementById('venueDetailsModal').style.display = 'block';
 };
