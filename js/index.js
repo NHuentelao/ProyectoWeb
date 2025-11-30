@@ -149,8 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('twoFactorModal').classList.remove('hidden');
                         await sendTwoFactorCode();
                     } else {
-                        msg.style.color = 'green';
-                        msg.textContent = '¡Éxito! Redirigiendo...';
+                        msg.innerHTML = '<div class="success-loader"></div>';
                         let redirect = result.redirect;
                         if (redirect.endsWith('.php')) redirect = redirect.replace('.php', '.html');
                         window.location.href = redirect; 
@@ -316,8 +315,7 @@ window.handleGoogleSignIn = function(response) {
     .then(res => res.json())
     .then(result => {
         if (result.success) {
-            msg.style.color = 'green';
-            msg.textContent = '¡Éxito!';
+            msg.innerHTML = '<div class="success-loader"></div>';
             let redirect = result.redirect;
             if (redirect.endsWith('.php')) redirect = redirect.replace('.php', '.html');
             window.location.href = redirect;
