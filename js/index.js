@@ -446,7 +446,7 @@ function updateMapMarkers(venuesToShow) {
         };
         markers.push(new PulsingMarker(pos, color, map, v.nombre, onMarkerClick));
     });
-    if (venuesToShow.length > 0) map.fitBounds(bounds);
+    // if (venuesToShow.length > 0) map.fitBounds(bounds); // Desactivado para evitar zoom automático
 }
 
 // --- 5. Modal Detalles y Lightbox ---
@@ -545,7 +545,7 @@ window.initMap = async function() {
         const resp = await fetch('api/api.php?action=get_venues');
         allVenues = await resp.json();
         
-        const center = { lat: -37.6083, lng: -73.6472 };
+        const center = { lat: -37.6095, lng: -73.6500 }; // Centro ajustado de Lebu
         map = new google.maps.Map(document.getElementById('map'), { 
             center, zoom: 14, gestureHandling: 'greedy', scrollwheel: true, fullscreenControl: true, zoomControl: true,
             styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
