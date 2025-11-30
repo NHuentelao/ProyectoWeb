@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             loginBtn.disabled = true;
-            btnText.textContent = 'Verificando...';
+            // btnText.textContent = 'Verificando...';
             spinner.classList.remove('hidden');
 
             try {
@@ -305,8 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
 window.handleGoogleSignIn = function(response) {
     const credential = response.credential;
     const msg = document.getElementById('msg');
-    msg.style.color = 'blue';
-    msg.textContent = 'Verificando con Google...';
+    msg.innerHTML = '<div class="success-loader"></div>';
 
     fetch('api/api.php?action=google_login', {
         method: 'POST',
