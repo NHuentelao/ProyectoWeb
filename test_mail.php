@@ -61,8 +61,10 @@ if ($user && $pass) {
         $mail->SMTPAuth   = true;
         $mail->Username   = $user;
         $mail->Password   = $pass;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        
+        // CAMBIO: Usar SSL en puerto 465 (A veces el 587 da problemas de red en contenedores)
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = 465;
 
         // Destinatarios
         $mail->setFrom($user, 'Test Debug');

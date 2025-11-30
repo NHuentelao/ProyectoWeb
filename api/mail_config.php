@@ -28,8 +28,10 @@ if (!file_exists($autoloadPath)) {
                 $mail->SMTPAuth   = true;
                 $mail->Username   = getenv('SMTP_USER'); // Variable de entorno
                 $mail->Password   = getenv('SMTP_PASS'); // Variable de entorno
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = 587;
+                
+                // CAMBIO: Usar SSL en puerto 465 para mayor compatibilidad en Render
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port       = 465;
 
                 // Configuración del Remitente y Destinatario
                 $mail->setFrom(getenv('SMTP_USER'), 'ReservaNoble Lebu');
