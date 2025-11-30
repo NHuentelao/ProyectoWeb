@@ -4,8 +4,8 @@
 
 ### 1. Configuración de la Base de Datos
 
-1. **Abrir XAMPP** y iniciar Apache y MySQL
-2. **Abrir phpMyAdmin** (http://localhost/phpmyadmin)
+1. **Iniciar servidor web y base de datos**
+2. **Abrir gestor de base de datos** (ej. pgAdmin o phpMyAdmin)
 3. **Crear la base de datos** `reservas_lebu`
 4. **Ejecutar el script de creación de tablas** (el que proporcionaste)
 5. **Ejecutar el script de datos de prueba** (`datos_prueba.sql`)
@@ -91,7 +91,7 @@
 ### 8. Solución de Problemas
 
 #### Si el formulario no funciona:
-1. Verificar que XAMPP esté ejecutándose
+1. Verificar que el servidor esté ejecutándose
 2. Verificar la conexión a la base de datos
 3. Revisar la consola del navegador para errores
 
@@ -118,7 +118,7 @@
 
 - **Backend:** PHP con PDO
 - **Frontend:** HTML5, CSS3, JavaScript ES6+
-- **Base de Datos:** MySQL
+- **Base de Datos:** PostgreSQL / MySQL
 - **Mapas:** Google Maps API
 - **Iconos:** Font Awesome
 - **Diseño:** Responsive y moderno
