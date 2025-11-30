@@ -583,6 +583,15 @@ try {
             $user = $data['user'];
             $user_id = $data['id'];
 
+            // Verificar si el usuario objetivo es otro administrador
+            $stmt = $pdo->prepare("SELECT rol FROM usuarios WHERE id = ?");
+            $stmt->execute([$user_id]);
+            $target_user = $stmt->fetch();
+
+            if ($target_user && $target_user['rol'] === 'admin' && $user_id != get_session_user_id()) {
+                send_json(['success' => false, 'message' => 'No tienes permiso para editar a otros administradores.']);
+            }
+
             // Verificar email duplicado
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ? AND id != ?");
             $stmt->execute([$user['email'], $user_id]);
@@ -590,11 +599,21 @@ try {
                 send_json(['success' => false, 'message' => 'Ese correo electrónico ya está en uso por otra cuenta.']);
             }
             
-            // Update without password
+            // Actualizar datos básicos
             $stmt = $pdo->prepare("UPDATE usuarios SET nombre = ?, email = ?, telefono = ?, rol = ? WHERE id = ?");
             $stmt->execute([
                 $user['name'], $user['email'], $user['phone'], $user['role'], $user_id
             ]);
+
+            // Actualizar contraseña si se proporciona (solo para uno mismo o usuarios normales)
+            if (!empty($user['password'])) {
+                if (strlen($user['password']) < 6) {
+                    send_json(['success' => false, 'message' => 'La contraseña debe tener al menos 6 caracteres.']);
+                }
+                $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE id = ?");
+                $stmt->execute([$hashed_password, $user_id]);
+            }
 
             // Si el admin se edita a sí mismo, actualizar la sesión
             if ($user_id == get_session_user_id()) {
@@ -610,7 +629,17 @@ try {
         case 'delete_user': // (Admin)
             check_admin();
             $id = $data['id'] ?? 0;
-            // Evitar que el admin se elimine a sí mismo
+            
+            // Verificar si el usuario objetivo es administrador
+            $stmt = $pdo->prepare("SELECT rol FROM usuarios WHERE id = ?");
+            $stmt->execute([$id]);
+            $target_user = $stmt->fetch();
+
+            if ($target_user && $target_user['rol'] === 'admin') {
+                send_json(['success' => false, 'message' => 'No se puede eliminar una cuenta de administrador.']);
+            }
+
+            // Evitar que el admin se elimine a sí mismo (redundante con lo de arriba pero seguro)
             if ($id == get_session_user_id()) {
                 send_json(['success' => false, 'message' => 'No puedes eliminar tu propia cuenta mientras estás en sesión.']);
             }
