@@ -538,7 +538,7 @@ function editUser(index) {
     document.getElementById('editUserName').value = user.nombre;
     document.getElementById('editUserEmail').value = user.email;
     document.getElementById('editUserPhone').value = user.telefono || '';
-    // Password field removed for security
+    document.getElementById('editUserPassword').value = ''; // Clear password field
     document.getElementById('editUserRole').value = user.rol;
     document.getElementById('editUserMsg').textContent = '';
     document.getElementById('editUserMsg').className = 'msg';
@@ -557,7 +557,7 @@ async function saveUserEdit() {
         name: document.getElementById('editUserName').value.trim(),
         email: document.getElementById('editUserEmail').value.trim().toLowerCase(),
         phone: document.getElementById('editUserPhone').value.trim(),
-        // Password removed
+        password: document.getElementById('editUserPassword').value.trim(),
         role: document.getElementById('editUserRole').value
     };
     
