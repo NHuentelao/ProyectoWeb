@@ -653,7 +653,7 @@ try {
         case 'get_requests': // (Admin)
             check_admin();
             // Unir con usuarios y lugares para obtener los nombres
-            $sql = "SELECT r.*, u.nombre as userName, u.email as userEmail, u.telefono as userPhone, l.nombre as venueName 
+            $sql = "SELECT r.*, u.nombre as \"userName\", u.email as \"userEmail\", u.telefono as \"userPhone\", l.nombre as \"venueName\" 
                     FROM solicitudes r
                     JOIN usuarios u ON r.id_usuario = u.id
                     JOIN lugares l ON r.id_lugar = l.id
@@ -664,7 +664,7 @@ try {
 
         case 'get_my_requests': // (User)
             $user_id = get_session_user_id();
-            $sql = "SELECT r.*, l.nombre as venueName 
+            $sql = "SELECT r.*, l.nombre as \"venueName\" 
                     FROM solicitudes r
                     JOIN lugares l ON r.id_lugar = l.id
                     WHERE r.id_usuario = ?
@@ -813,7 +813,7 @@ try {
             ]);
             
             // Obtener datos del usuario y lugar para el correo
-            $stmt = $pdo->prepare("SELECT u.nombre, u.email, l.nombre as venueName FROM usuarios u, lugares l WHERE u.id = ? AND l.id = ?");
+            $stmt = $pdo->prepare("SELECT u.nombre, u.email, l.nombre as \"venueName\" FROM usuarios u, lugares l WHERE u.id = ? AND l.id = ?");
             $stmt->execute([$user_id, $id_lugar]);
             $user_data = $stmt->fetch();
             
@@ -839,7 +839,7 @@ try {
             $status = $data['status'] ?? 'pending';
             
             // 1. Obtener datos de la solicitud para la notificación
-            $stmt = $pdo->prepare("SELECT r.*, u.id as user_id, u.nombre as userName, u.email as userEmail, l.nombre as venueName 
+            $stmt = $pdo->prepare("SELECT r.*, u.id as user_id, u.nombre as \"userName\", u.email as \"userEmail\", l.nombre as \"venueName\" 
                                   FROM solicitudes r 
                                   JOIN usuarios u ON r.id_usuario = u.id
                                   JOIN lugares l ON r.id_lugar = l.id
@@ -997,7 +997,7 @@ try {
 
         case 'get_reports': // (Admin)
             check_admin();
-            $sql = "SELECT r.*, u.nombre as userName, u.email as userEmail 
+            $sql = "SELECT r.*, u.nombre as \"userName\", u.email as \"userEmail\" 
                     FROM reportes r
                     JOIN usuarios u ON r.id_usuario = u.id
                     ORDER BY r.status ASC, r.created_at DESC";
