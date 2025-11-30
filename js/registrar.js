@@ -9,13 +9,10 @@
     const msg = document.getElementById('msg');
     const button = form.querySelector('button');
 
-    // Formatear teléfono
+    // Formatear teléfono (Solo permitir números y máximo 8 dígitos)
     phoneEl.addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 8) value = value.slice(0, 8);
-        if (value.length >= 4) {
-            value = value.slice(0, 4) + ' ' + value.slice(4);
-        }
         e.target.value = value;
     });
 
@@ -30,13 +27,13 @@
         if (!emailEl.checkValidity()) { msg.textContent = 'Introduce un correo válido.'; emailEl.focus(); button.disabled = false; button.textContent = 'Registrarse'; return }
         if (passwordEl.value.length < 6) { msg.textContent = 'La contraseña debe tener al menos 6 caracteres.'; passwordEl.focus(); button.disabled = false; button.textContent = 'Registrarse'; return }
         if (passwordEl.value !== confirmEl.value) { msg.textContent = 'Las contraseñas no coinciden.'; confirmEl.focus(); button.disabled = false; button.textContent = 'Registrarse'; return }
-        if (phoneEl.value.replace(' ', '').length < 8) { msg.textContent = 'El número debe tener 8 dígitos (ej: 1234 5678).'; phoneEl.focus(); button.disabled = false; button.textContent = 'Registrarse'; return }
+        if (phoneEl.value.length < 8) { msg.textContent = 'El número debe tener 8 dígitos.'; phoneEl.focus(); button.disabled = false; button.textContent = 'Registrarse'; return }
 
         const userData = {
             name: nameEl.value.trim(),
             email: emailEl.value.trim().toLowerCase(),
             password: passwordEl.value,
-            phone: '+56 9 ' + phoneEl.value.trim()
+            phone: '+569' + phoneEl.value.trim()
         };
 
         try {
