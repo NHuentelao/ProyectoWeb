@@ -5,6 +5,7 @@ session_start();
 // Incluir la conexión a la base de datos
 // 'db.php' está en la MISMA carpeta 'api'
 require 'db.php'; 
+require 'mail_config.php';
 
 // Establecer el tipo de contenido a JSON
 header('Content-Type: application/json');
@@ -58,14 +59,10 @@ function create_notification_internal($pdo, $user_id, $message, $type) {
 
 // Nueva función auxiliar para enviar correos de solicitudes (reutiliza lógica de mail existente)
 function send_request_notification_email($user_email, $user_name, $subject, $message_body) {
-    $headers = "From: ReservaNoble <nhuentelaoh@alumnos.ceduc.cl>\r\n";
-    $headers .= "Reply-To: nhuentelaoh@alumnos.ceduc.cl\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $full_message = "Hola $user_name,<br><br>" . nl2br($message_body) . "<br><br>Saludos,<br>ReservaNoble<br><br>---<br>Este es un mensaje automático. No responder.";
     
-    $full_message = "Hola $user_name,\n\n$message_body\n\nSaludos,\nReservaNoble\n\n---\nEste es un mensaje automático. No responder.";
-    
-    if (!mail($user_email, $subject, $full_message, $headers)) {
-        error_log("Error al enviar correo a $user_email: mail() falló");
+    if (!send_email($user_email, $subject, $full_message)) {
+        error_log("Error al enviar correo a $user_email: send_email() falló");
         // No bloquear la operación; solo loguear el error
     }
 }
@@ -142,21 +139,17 @@ try {
             $name = $_SESSION['pending_2fa_user']['name'];
             
             // Enviar correo usando mail() de PHP
-                $subject = 'Código de verificación - ReservaNoble';
-            $message = "Hola $name,\n\n";
-            $message .= "Tu código de verificación es: $code\n\n";
-            $message .= "Este código es válido por 5 minutos.\n\n";
-            $message .= "Si no solicitaste este código, ignora este mensaje.\n\n";
-                $message .= "Saludos,\nReservaNoble";
+            $subject = 'Código de verificación - ReservaNoble';
+            $message = "Hola $name,<br><br>";
+            $message .= "Tu código de verificación es: <b>$code</b><br><br>";
+            $message .= "Este código es válido por 5 minutos.<br><br>";
+            $message .= "Si no solicitaste este código, ignora este mensaje.<br><br>";
+            $message .= "Saludos,<br>ReservaNoble";
             
-            $headers = "From: ReservaNoble <nhuentelaoh@alumnos.ceduc.cl>\r\n";
-            $headers .= "Reply-To: nhuentelaoh@alumnos.ceduc.cl\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-            
-            if (mail($email, $subject, $message, $headers)) {
+            if (send_email($email, $subject, $message)) {
                 send_json(['success' => true, 'message' => 'Código enviado a tu correo.']);
             } else {
-                error_log("Error al enviar correo 2FA a $email: mail() falló");
+                error_log("Error al enviar correo 2FA a $email: send_email() falló");
                 send_json(['success' => false, 'message' => 'Error al enviar el código. Verifica tu configuración de email.']);
             }
             break;
@@ -313,13 +306,9 @@ try {
             
             // Enviar el código por email
             $subject = 'Código de Recuperación - ReservaNoble';
-            $message = "Hola {$user['nombre']},\n\nTu código de recuperación es: $code\n\nEste código es válido por 10 minutos.\n\nSi no solicitaste esto, ignora este mensaje.\n\nSaludos,\nReservaNoble";
+            $message = "Hola {$user['nombre']},<br><br>Tu código de recuperación es: <b>$code</b><br><br>Este código es válido por 10 minutos.<br><br>Si no solicitaste esto, ignora este mensaje.<br><br>Saludos,<br>ReservaNoble";
             
-            $headers = "From: ReservaNoble <nhuentelaoh@alumnos.ceduc.cl>\r\n";
-            $headers .= "Reply-To: nhuentelaoh@alumnos.ceduc.cl\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-            
-            if (mail($email, $subject, $message, $headers)) {
+            if (send_email($email, $subject, $message)) {
                 send_json(['success' => true, 'message' => 'Código enviado a tu correo.']);
             } else {
                 error_log("Error mail() forgot_password a $email");
@@ -648,11 +637,7 @@ try {
                 send_json(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
             }
 
-            $headers = "From: ReservaNoble <nhuentelaoh@alumnos.ceduc.cl>\r\n";
-            $headers .= "Reply-To: nhuentelaoh@alumnos.ceduc.cl\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            if (mail($email, $subject, $message, $headers)) {
+            if (send_email($email, $subject, nl2br($message))) {
                 send_json(['success' => true, 'message' => 'Correo enviado correctamente.']);
             } else {
                 send_json(['success' => false, 'message' => 'Error al enviar el correo.']);
@@ -1147,15 +1132,14 @@ try {
             // 2. Enviar correo al administrador (simulado o real si hay servidor SMTP)
             $to = "admin@lebu.cl"; // Cambia esto al correo real del administrador
             $subject = "Nuevo mensaje de contacto: " . $asunto;
-            $body = "Has recibido un nuevo mensaje de contacto.\n\n";
-            $body .= "Nombre: " . $nombre . "\n";
-            $body .= "Email: " . $email . "\n";
-            $body .= "Asunto: " . $asunto . "\n";
-            $body .= "Mensaje:\n" . $mensaje . "\n";
-            $headers = "From: " . $email;
+            $body = "Has recibido un nuevo mensaje de contacto.<br><br>";
+            $body .= "Nombre: " . $nombre . "<br>";
+            $body .= "Email: " . $email . "<br>";
+            $body .= "Asunto: " . $asunto . "<br>";
+            $body .= "Mensaje:<br>" . nl2br($mensaje) . "<br>";
 
             // Intentar enviar correo (puede fallar en localhost sin config SMTP)
-            $mailSent = @mail($to, $subject, $body, $headers);
+            $mailSent = send_email($to, $subject, $body);
 
             // Actualizar tiempo de último contacto en sesión
             $_SESSION['last_contact_time'] = time();
@@ -1192,11 +1176,7 @@ try {
                 send_json(['success' => false, 'message' => 'Email y mensaje son requeridos.']);
             }
 
-            $headers = "From: ReservaNoble <nhuentelaoh@alumnos.ceduc.cl>\r\n";
-            $headers .= "Reply-To: nhuentelaoh@alumnos.ceduc.cl\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            if (mail($email, $subject, $message, $headers)) {
+            if (send_email($email, $subject, nl2br($message))) {
                 // Marcar como leído/respondido si se proporcionó ID
                 if ($id) {
                     if ($type === 'report') {
