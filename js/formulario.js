@@ -591,7 +591,7 @@ async function renderMyReservations(){
                                 <i class="fas fa-times"></i> Cancelar
                             </button>` : ''
                         }
-                        ${status.class === 'rejected' ? 
+                        ${status.class === 'rejected' || status.class === 'approved' ? 
                             `<button onclick="markReservationAsRead(${r.id})" class="btn-archive" title="Archivar" style="background: #475569; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                                 <i class="fas fa-archive"></i> Archivar
                             </button>` : ''
