@@ -453,7 +453,9 @@ function updateMapMarkers(venuesToShow) {
         const content = `<div style="min-width:180px; padding: 5px; color: #333; max-width: 200px;">
             ${displayImage ? `<img src="${displayImage}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
             <h3 style="margin:0 0 5px; font-size:1.1rem; color: #000;">${v.nombre}</h3>
-            <div style="color:#666; margin-bottom:8px;">${v.direccion || ''}</div>
+            <div style="color:#666; margin-bottom:5px;">${v.direccion || ''}</div>
+            <div style="font-size: 0.9em; color: #444; margin-bottom: 3px;"><strong>Base:</strong> $${parseInt(v.precio_base || 0).toLocaleString()}</div>
+            <div style="font-size: 0.9em; color: #444; margin-bottom: 8px;"><strong>p/P:</strong> $${parseInt(v.precio_por_persona || 0).toLocaleString()}</div>
             <div style="margin-top:6px">
                 <button onclick="openDetailsModal(${v.id})" class="btn small" style="background:#2563eb; color:white; padding:6px 12px; border-radius:4px; display:inline-block; border:none; cursor:pointer; width:100%;">Ver Detalles</button>
             </div>

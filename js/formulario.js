@@ -396,7 +396,9 @@ function addMarkers(venuesList) {
                         <h3 style="margin: 0 0 5px 0; color: #333;">${venue.nombre}</h3>
                         <p style="margin: 0 0 5px 0; font-size: 13px;">${venue.direccion}</p>
                         <p style="margin: 0 0 5px 0; font-size: 13px;"><strong>Estado:</strong> ${statusLabel(venue.status)}</p>
-                        <p style="margin: 0 0 10px 0; font-size: 13px;"><strong>Capacidad:</strong> ${venue.capacidad}</p>
+                        <p style="margin: 0 0 5px 0; font-size: 13px;"><strong>Capacidad:</strong> ${venue.capacidad}</p>
+                        <p style="margin: 0 0 5px 0; font-size: 13px;"><strong>Base:</strong> $${parseInt(venue.precio_base || 0).toLocaleString()}</p>
+                        <p style="margin: 0 0 10px 0; font-size: 13px;"><strong>p/P:</strong> $${parseInt(venue.precio_por_persona || 0).toLocaleString()}</p>
                         ${(() => {
                             if (pendingVenueIds.has(parseInt(venue.id))) {
                                 return `<button onclick="document.getElementById('openReservationsBtn').click()" style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; width: 100%;">Solicitud en curso</button>`;
