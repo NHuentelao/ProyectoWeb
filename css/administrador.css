@@ -816,6 +816,30 @@ button[onclick*="toggleReportStatus"][style*="background: var(--warning)"] {
     border: none !important;
     box-shadow: none !important;
     padding-left: 12px;
+    height: 100%;
+    width: 100%;
+    outline: none !important;
+}
+
+#venueModal .owner-section .phone-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    height: 45px; /* Altura fija para consistencia */
+}
+
+#venueModal .owner-section .phone-input .prefix {
+    padding: 0 12px;
+    color: #cbd5e1;
+    font-weight: 500;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    height: 100%;
+    background: rgba(0,0,0,0.1);
 }
 
 /* --- CORRECCIONES Y MEJORAS DEL MODAL DE LUGARES --- */
