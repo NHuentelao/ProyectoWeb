@@ -59,10 +59,10 @@
             </div>
 
             <div class="input-group">
-                <i class="fas fa-phone input-icon"></i>
-                <div style="display: flex; align-items: center; width: 100%;">
-                    <span style="padding: 0 10px; color: #666; font-weight: 500;">+56 9</span>
-			        <input id="phone" name="phone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" style="padding-left: 10px;">
+                <i class="fas fa-phone input-icon" style="z-index: 10;"></i>
+                <div style="display: flex; align-items: center; width: 100%; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; background: rgba(0, 0, 0, 0.25); overflow: hidden;">
+                    <span style="padding: 20px 10px 20px 56px; color: rgba(255, 255, 255, 0.8); font-weight: 500; border-right: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); white-space: nowrap;">+56 9</span>
+                    <input id="phone" name="phone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" style="border: none; border-radius: 0; flex: 1; background: transparent; color: #ffffff; padding: 20px; margin: 0; width: auto; height: auto;">
                 </div>
             </div>
 

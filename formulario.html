@@ -123,9 +123,9 @@
             </div>
             <div class="form-group">
                 <label for="profilePhone">Teléfono</label>
-                <div class="phone-input">
-                    <span class="prefix">+56 9</span>
-                    <input id="profilePhone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);">
+                <div class="phone-input" style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #f8fafc;">
+                    <span class="prefix" style="padding: 12px; color: #64748b; font-weight: 500; border-right: 1px solid #cbd5e1; background: #f1f5f9; user-select: none; position: static; transform: none;">+56 9</span>
+                    <input id="profilePhone" type="tel" placeholder="12345678" required maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" style="border: none; border-radius: 0; flex: 1; background: transparent; color: #0f172a; height: 100%; padding: 12px; padding-left: 12px !important;">
                 </div>
             </div>
             <div class="modal-actions">
