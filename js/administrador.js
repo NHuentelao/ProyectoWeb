@@ -1,5 +1,6 @@
 let adminMap;
 let markers = [];
+let currentEditingMarker = null; // Marcador para la ubicación seleccionada (Nuevo/Editar)
 let selectedVenueIndex = null; // Índice en el array 'allVenues'
 let editingUserIndex = null;   // Índice en el array 'allUsers'
 
@@ -127,9 +128,24 @@ function initAdminMap() {
         document.getElementById('venue-lat').value = lat.toFixed(6);
         document.getElementById('venue-lng').value = lng.toFixed(6);
         
-        // Si estamos en modo creación (selectedVenueIndex es null), no reseteamos el formulario
-        // Si estamos en modo edición, tampoco. Solo actualizamos coordenadas.
-        // El reset se hace al abrir el modal.
+        // Actualizar o crear el marcador de edición
+        if (currentEditingMarker) {
+            currentEditingMarker.setPosition(e.latLng);
+        } else {
+            currentEditingMarker = new google.maps.Marker({
+                position: e.latLng,
+                map: adminMap,
+                title: 'Ubicación seleccionada',
+                animation: google.maps.Animation.DROP,
+                draggable: true // Permitir arrastrar para ajuste fino
+            });
+            
+            // Actualizar inputs al arrastrar
+            currentEditingMarker.addListener('dragend', (evt) => {
+                document.getElementById('venue-lat').value = evt.latLng.lat().toFixed(6);
+                document.getElementById('venue-lng').value = evt.latLng.lng().toFixed(6);
+            });
+        }
     });
 }
 
@@ -149,6 +165,12 @@ function openVenueModal(index = null) {
     galleryContainer.style.display = 'none';
     document.getElementById('venueMsg').textContent = '';
     document.getElementById('venueMsg').className = 'msg';
+
+    // Limpiar marcador de edición anterior si existe
+    if (currentEditingMarker) {
+        currentEditingMarker.setMap(null);
+        currentEditingMarker = null;
+    }
 
     if (index !== null) {
         // MODO EDICIÓN
@@ -200,6 +222,20 @@ function openVenueModal(index = null) {
             const pos = { lat: parseFloat(venue.lat), lng: parseFloat(venue.lng) };
             adminMap.setCenter(pos);
             adminMap.setZoom(16);
+
+            // Crear marcador de edición en la posición actual
+            currentEditingMarker = new google.maps.Marker({
+                position: pos,
+                map: adminMap,
+                title: 'Ubicación actual',
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+            
+            currentEditingMarker.addListener('dragend', (evt) => {
+                document.getElementById('venue-lat').value = evt.latLng.lat().toFixed(6);
+                document.getElementById('venue-lng').value = evt.latLng.lng().toFixed(6);
+            });
         }
 
     } else {
