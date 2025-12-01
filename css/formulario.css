@@ -556,13 +556,10 @@ form#reservationForm {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 55vh; /* Altura máxima ajustada */
-  overflow-y: auto; /* Scroll vertical automático */
+  /* max-height: 55vh; Eliminado para permitir que el padre controle el scroll */
+  /* overflow-y: auto; Eliminado para permitir que el padre controle el scroll */
   padding: 4px;
   padding-right: 8px; /* Espacio para el scrollbar */
-  /* Estilos para asegurar que el scrollbar se vea bien */
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
 }
 
 /* Asegurar que el contenido de la pestaña no corte el scroll del hijo */
@@ -570,7 +567,13 @@ form#reservationForm {
   display: none;
   padding: 24px 32px;
   animation: fadeIn 0.3s ease;
-  overflow: visible; /* Dejar que el hijo maneje el scroll si es necesario */
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.tab-content.active {
+  display: block;
 }
 
 /* Tarjetas de Reserva */
