@@ -811,6 +811,13 @@ button[onclick*="toggleReportStatus"][style*="background: var(--warning)"] {
     border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+#venueModal .owner-section .phone-input input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 12px;
+}
+
 /* --- CORRECCIONES Y MEJORAS DEL MODAL DE LUGARES --- */
 #venueModal .modal-content {
     width: 1200px !important;
