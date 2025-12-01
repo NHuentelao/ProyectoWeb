@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS lugares (
     owner_nombre VARCHAR(255),
     owner_telefono VARCHAR(50),
     owner_email VARCHAR(255),
-    imagen_url VARCHAR(255),
+    imagen_url TEXT,
     status VARCHAR(20) DEFAULT 'available' CHECK (status IN ('available', 'maintenance', 'reserved', 'deleted'))
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS lugares (
 CREATE TABLE IF NOT EXISTS galeria_lugares (
     id SERIAL PRIMARY KEY,
     id_lugar INTEGER NOT NULL,
-    imagen_url VARCHAR(255) NOT NULL,
+    imagen_url TEXT NOT NULL,
     FOREIGN KEY (id_lugar) REFERENCES lugares(id) ON DELETE CASCADE
 );
 

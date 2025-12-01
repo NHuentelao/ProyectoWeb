@@ -1349,15 +1349,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listener del formulario de VENUES (Lugares)
     const venueForm = document.getElementById('venueForm');
     if (venueForm) {
-        // Manejo de vista previa de imagen (URL)
+        // Manejo de vista previa de imagen (URL y Archivo)
         const imageInput = document.getElementById('venue-images');
+        const fileInput = document.getElementById('venue-image-file');
         const galleryContainer = document.getElementById('gallery-preview-container');
         const galleryPreview = document.getElementById('gallery-preview');
+
+        // Vista previa de Archivo (Base64)
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    // Validar tamaño (ej: max 2MB para no saturar BD)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('La imagen es muy pesada (Máx 2MB). Por favor comprímela.');
+                        this.value = ''; // Limpiar
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        galleryPreview.innerHTML = '';
+                        galleryContainer.style.display = 'block';
+                        
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #10b981;">
+                            <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #10b981;">Archivo</span>
+                        `;
+                        galleryPreview.appendChild(div);
+                        
+                        // Limpiar URL si se selecciona archivo
+                        if(imageInput) imageInput.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
         // Vista previa de URL
         if (imageInput) {
             imageInput.addEventListener('input', function() {
                 const url = this.value.trim();
+                // Si hay archivo, ignorar URL o limpiar archivo (aquí priorizamos lo último tocado)
+                if (fileInput && fileInput.files.length > 0 && url) {
+                    fileInput.value = ''; // Limpiar archivo si usuario escribe URL
+                }
+
                 galleryPreview.innerHTML = '';
                 
                 if (url) {
@@ -1366,11 +1405,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     div.style.position = 'relative';
                     div.innerHTML = `
                         <img src="${url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #3b82f6;" onerror="this.src='https://via.placeholder.com/100?text=Error'">
-                        <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #3b82f6;">Vista Previa</span>
+                        <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #3b82f6;">URL</span>
                     `;
                     galleryPreview.appendChild(div);
                 } else {
-                    galleryContainer.style.display = 'none';
+                    // Si no hay URL y no hay archivo, ocultar
+                    if (!fileInput || !fileInput.files.length) {
+                        galleryContainer.style.display = 'none';
+                    }
                 }
             });
         }
@@ -1400,7 +1442,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const capacity = document.getElementById('venue-capacity').value.trim();
             const basePrice = document.getElementById('venue-base-price').value.trim();
             const pricePerGuest = document.getElementById('venue-price-per-guest').value.trim();
-            const imageUrl = document.getElementById('venue-images').value.trim();
+            
+            // PROCESAR IMAGEN (URL o ARCHIVO)
+            let imageUrl = document.getElementById('venue-images').value.trim();
+            const fileInput = document.getElementById('venue-image-file');
+
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                try {
+                    // Convertir archivo a Base64
+                    imageUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = (e) => reject(e);
+                        reader.readAsDataURL(fileInput.files[0]);
+                    });
+                } catch (err) {
+                    venueMsg.textContent = 'Error al procesar la imagen.';
+                    venueMsg.className = 'msg error'; return;
+                }
+            }
 
             if (!name || !address || !isFinite(lat) || !isFinite(lng)) {
                 venueMsg.textContent = 'Nombre, Dirección y Ubicación en mapa son requeridos.';
@@ -1428,7 +1488,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('capacity', capacity);
             formData.append('basePrice', basePrice);
             formData.append('pricePerGuest', pricePerGuest);
-            formData.append('image_url', imageUrl);
+            formData.append('image_url', imageUrl); // Enviamos el string (URL o Base64)
             
             if (venue_id) {
                 formData.append('id', venue_id);
