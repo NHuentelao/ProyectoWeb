@@ -599,7 +599,7 @@ form#reservationForm {
   gap: 16px;
   transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; Removed to match notification card behavior */
   margin-bottom: 12px;
 }
 .reservation-card:hover {
