@@ -578,6 +578,15 @@ form#reservationForm {
   flex-direction: column;
 }
 
+/* Footer de tabs en modales */
+.modal-tab-footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 /* Tarjetas de Reserva */
 .reservation-card {
   background: #fff;
@@ -1041,6 +1050,7 @@ form#reservationForm {
     .modal-header { padding: 15px; }
     .modal-body { padding: 15px; }
     .modal-section { padding: 15px; }
+    .tab-content { padding: 15px; }
     
     .reservation-card {
         flex-direction: column;
