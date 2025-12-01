@@ -1358,32 +1358,33 @@ document.addEventListener('DOMContentLoaded', function() {
         // Vista previa de Archivo (Base64)
         if (fileInput) {
             fileInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    // Validar tamaño (ej: max 2MB para no saturar BD)
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('La imagen es muy pesada (Máx 2MB). Por favor comprímela.');
-                        this.value = ''; // Limpiar
-                        return;
-                    }
+                const files = this.files;
+                if (files && files.length > 0) {
+                    galleryPreview.innerHTML = ''; // Limpiar vista previa anterior
+                    galleryContainer.style.display = 'block';
+                    
+                    // Limpiar URL si se selecciona archivo
+                    if(imageInput) imageInput.value = '';
 
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        galleryPreview.innerHTML = '';
-                        galleryContainer.style.display = 'block';
-                        
-                        const div = document.createElement('div');
-                        div.style.position = 'relative';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #10b981;">
-                            <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #10b981;">Archivo</span>
-                        `;
-                        galleryPreview.appendChild(div);
-                        
-                        // Limpiar URL si se selecciona archivo
-                        if(imageInput) imageInput.value = '';
-                    };
-                    reader.readAsDataURL(file);
+                    Array.from(files).forEach((file, index) => {
+                        // Validar tamaño (ej: max 2MB para no saturar BD)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(`La imagen "${file.name}" es muy pesada (Máx 2MB). Fue omitida.`);
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const div = document.createElement('div');
+                            div.style.position = 'relative';
+                            div.innerHTML = `
+                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #10b981;">
+                                <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #10b981;">Archivo ${index + 1}</span>
+                            `;
+                            galleryPreview.appendChild(div);
+                        };
+                        reader.readAsDataURL(file);
+                    });
                 }
             });
         }
@@ -1443,21 +1444,34 @@ document.addEventListener('DOMContentLoaded', function() {
             const basePrice = document.getElementById('venue-base-price').value.trim();
             const pricePerGuest = document.getElementById('venue-price-per-guest').value.trim();
             
-            // PROCESAR IMAGEN (URL o ARCHIVO)
+            // PROCESAR IMAGENES (URL o ARCHIVOS)
             let imageUrl = document.getElementById('venue-images').value.trim();
             const fileInput = document.getElementById('venue-image-file');
+            let newImages = [];
 
-            if (fileInput && fileInput.files && fileInput.files[0]) {
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
                 try {
-                    // Convertir archivo a Base64
-                    imageUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = (e) => reject(e);
-                        reader.readAsDataURL(fileInput.files[0]);
+                    // Convertir archivos a Base64
+                    const filePromises = Array.from(fileInput.files).map(file => {
+                        if (file.size > 2 * 1024 * 1024) return null; // Skip large files
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = (e) => reject(e);
+                            reader.readAsDataURL(file);
+                        });
                     });
+                    
+                    const results = await Promise.all(filePromises);
+                    newImages = results.filter(img => img !== null);
+                    
+                    // Si hay imágenes nuevas, usamos la primera como principal si no hay URL
+                    if (newImages.length > 0 && !imageUrl) {
+                        imageUrl = newImages[0];
+                    }
+
                 } catch (err) {
-                    venueMsg.textContent = 'Error al procesar la imagen.';
+                    venueMsg.textContent = 'Error al procesar las imágenes.';
                     venueMsg.className = 'msg error'; return;
                 }
             }
@@ -1488,7 +1502,14 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('capacity', capacity);
             formData.append('basePrice', basePrice);
             formData.append('pricePerGuest', pricePerGuest);
-            formData.append('image_url', imageUrl); // Enviamos el string (URL o Base64)
+            formData.append('image_url', imageUrl); // Enviamos la principal (URL o primera Base64)
+            
+            // Enviar array de nuevas imágenes para la galería
+            if (newImages.length > 0) {
+                newImages.forEach((img, index) => {
+                    formData.append(`gallery_images[${index}]`, img);
+                });
+            }
             
             if (venue_id) {
                 formData.append('id', venue_id);

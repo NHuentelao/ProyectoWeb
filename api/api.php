@@ -546,12 +546,16 @@ try {
                 $venue_id = $pdo->lastInsertId();
             }
 
-            // 2. Manejo de Galería (Múltiples imágenes) - DESACTIVADO EN FAVOR DE URL EXTERNA
-            /*
-            if (isset($_FILES['images'])) {
-                // ... (código anterior de subida de archivos) ...
+            // 2. Manejo de Galería (Múltiples imágenes)
+            if (isset($_POST['gallery_images']) && is_array($_POST['gallery_images'])) {
+                $stmtGallery = $pdo->prepare("INSERT INTO galeria_lugares (id_lugar, imagen_url) VALUES (?, ?)");
+                foreach ($_POST['gallery_images'] as $imgBase64) {
+                    // Validar que sea una cadena no vacía
+                    if (!empty($imgBase64) && is_string($imgBase64)) {
+                        $stmtGallery->execute([$venue_id, $imgBase64]);
+                    }
+                }
             }
-            */
             
             send_json(['success' => true]);
             break;
