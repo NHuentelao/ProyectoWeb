@@ -772,7 +772,8 @@ try {
 
             // --- 1. VALIDACIÓN DE SEGURIDAD (RATE LIMIT) ---
 
-            // A. Límite de Tiempo: Verificar cuándo fue la última solicitud de este usuario
+            // A. Límite de Tiempo: (Eliminado a petición)
+            /*
             $stmt = $pdo->prepare("SELECT created_at FROM solicitudes WHERE id_usuario = ? ORDER BY created_at DESC LIMIT 1");
             $stmt->execute([$user_id]);
             $last_request = $stmt->fetchColumn();
@@ -787,6 +788,7 @@ try {
                     send_json(['success' => false, 'message' => "Por favor espera $wait_time minutos antes de enviar otra solicitud."]);
                 }
             }
+            */
 
             // B. Límite de Cantidad: Verificar cuántas solicitudes pendientes tiene
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM solicitudes WHERE id_usuario = ? AND status = 'pending'");
