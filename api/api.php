@@ -826,10 +826,8 @@ try {
             }
 
             // Verificar si el usuario ya tiene una reserva APROBADA que se solape con este rango
-            // Lógica de solapamiento: (StartA <= EndB) and (EndA >= StartB)
-            // Aquí StartA/EndA es el nuevo evento, StartB/EndB son los eventos existentes
-            // Evento existente: fecha_evento (inicio), fecha_evento + duracion - 1 (fin)
-            
+            // (DESACTIVADO: Permitir múltiples reservas por usuario en la misma fecha)
+            /*
             $sqlUserConflict = "SELECT COUNT(*) FROM solicitudes 
                                 WHERE id_usuario = ? 
                                 AND status = 'approved'
@@ -841,6 +839,7 @@ try {
             if ($stmt->fetchColumn() > 0) {
                 send_json(['success' => false, 'message' => 'Ya tienes un evento aprobado que coincide con las fechas seleccionadas.']);
             }
+            */
 
             // --- FIN VALIDACIÓN DE SEGURIDAD ---
 
