@@ -25,8 +25,8 @@ html, body {
 /* --- Scrollbar Personalizado --- */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; } /* Darker for better visibility */
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 /* --- Header --- */
 .topbar-header {
@@ -1053,6 +1053,16 @@ form#reservationForm {
     .modal-body { padding: 15px; }
     .modal-section { padding: 15px; }
     .tab-content { padding: 15px; }
+
+    /* Force scrollbar on lists when content exceeds ~3 items */
+    .modal-list-container {
+        max-height: 55vh; 
+        overscroll-behavior: contain;
+    }
+
+    .modal-content {
+        max-height: 85vh; /* Ensure modal fits within viewport with browser bars */
+    }
     
     .reservation-card {
         flex-direction: column;
