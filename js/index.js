@@ -454,6 +454,8 @@ function updateMapMarkers(venuesToShow) {
             ${displayImage ? `<img src="${displayImage}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
             <h3 style="margin:0 0 5px; font-size:1.1rem; color: #000;">${v.nombre}</h3>
             <div style="color:#666; margin-bottom:5px;">${v.direccion || ''}</div>
+            <div style="font-size: 0.9em; color: #444; margin-bottom: 3px;"><strong>Estado:</strong> ${statusLabel(v.status)}</div>
+            <div style="font-size: 0.9em; color: #444; margin-bottom: 3px;"><strong>Capacidad:</strong> ${v.capacidad || 'N/A'}</div>
             <div style="font-size: 0.9em; color: #444; margin-bottom: 3px;"><strong>Base:</strong> $${parseInt(v.precio_base || 0).toLocaleString()}</div>
             <div style="font-size: 0.9em; color: #444; margin-bottom: 8px;"><strong>p/P:</strong> $${parseInt(v.precio_por_persona || 0).toLocaleString()}</div>
             <div style="margin-top:6px">
