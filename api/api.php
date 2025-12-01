@@ -826,8 +826,10 @@ try {
             }
 
             // Verificar si el usuario ya tiene una reserva APROBADA que se solape con este rango
-            // (DESACTIVADO: Permitir múltiples reservas por usuario en la misma fecha)
-            /*
+            // Lógica de solapamiento: (StartA <= EndB) and (EndA >= StartB)
+            // Aquí StartA/EndA es el nuevo evento, StartB/EndB son los eventos existentes
+            // Evento existente: fecha_evento (inicio), fecha_evento + duracion - 1 (fin)
+            
             $sqlUserConflict = "SELECT COUNT(*) FROM solicitudes 
                                 WHERE id_usuario = ? 
                                 AND status = 'approved'
@@ -839,7 +841,6 @@ try {
             if ($stmt->fetchColumn() > 0) {
                 send_json(['success' => false, 'message' => 'Ya tienes un evento aprobado que coincide con las fechas seleccionadas.']);
             }
-            */
 
             // --- FIN VALIDACIÓN DE SEGURIDAD ---
 
@@ -945,6 +946,27 @@ try {
             }
 
             // 2. Actualizar la solicitud
+            if ($status === 'approved') {
+                // Verificar si el usuario ya tiene OTRA reserva aprobada en las mismas fechas
+                // (Evitar que un usuario esté en dos lugares a la vez)
+                $fecha_inicio = $req['fecha_evento'];
+                $duracion = intval($req['duracion_dias'] ?? 1);
+                $fecha_fin = date('Y-m-d', strtotime($fecha_inicio . " + " . ($duracion - 1) . " days"));
+
+                $sqlUserConflict = "SELECT COUNT(*) FROM solicitudes 
+                                    WHERE id_usuario = ? 
+                                    AND status = 'approved'
+                                    AND id != ? 
+                                    AND (fecha_evento <= ? AND (fecha_evento + (duracion_dias - 1) * INTERVAL '1 day') >= ?)";
+                
+                $stmtUserConflict = $pdo->prepare($sqlUserConflict);
+                $stmtUserConflict->execute([$req['user_id'], $id, $fecha_fin, $fecha_inicio]);
+                
+                if ($stmtUserConflict->fetchColumn() > 0) {
+                    send_json(['success' => false, 'message' => 'El usuario ya tiene otra reserva aprobada para estas fechas.']);
+                }
+            }
+
             $stmt = $pdo->prepare("UPDATE solicitudes SET status = ? WHERE id = ?");
             $stmt->execute([$status, $id]);
 
