@@ -544,7 +544,11 @@ function editUser(index) {
 
     document.getElementById('editUserName').value = user.nombre;
     document.getElementById('editUserEmail').value = user.email;
-    document.getElementById('editUserPhone').value = user.telefono || '';
+    
+    let userPhone = user.telefono || '';
+    userPhone = userPhone.replace(/^\+56\s*9\s*/, '');
+    document.getElementById('editUserPhone').value = userPhone;
+
     document.getElementById('editUserPassword').value = ''; // Clear password field
     document.getElementById('editUserRole').value = user.rol;
     
@@ -570,10 +574,15 @@ async function saveUserEdit() {
     msgEl.textContent = '';
     msgEl.className = 'msg';
 
+    let phone = document.getElementById('editUserPhone').value.trim();
+    if (phone) {
+        phone = '+56 9 ' + phone;
+    }
+
     const updatedUserData = {
         name: document.getElementById('editUserName').value.trim(),
         email: document.getElementById('editUserEmail').value.trim().toLowerCase(),
-        phone: document.getElementById('editUserPhone').value.trim(),
+        phone: phone,
         password: document.getElementById('editUserPassword').value.trim(),
         role: document.getElementById('editUserRole').value
     };
@@ -1147,7 +1156,12 @@ function editVenue(index) {
     
     // Cargar datos del dueño
     document.getElementById('owner-name').value = venue.owner_nombre || '';
-    document.getElementById('owner-phone').value = venue.owner_telefono || '';
+    
+    let ownerPhone = venue.owner_telefono || '';
+    // Eliminar prefijo +56 9 o +569 para mostrar solo los 8 dígitos en el input
+    ownerPhone = ownerPhone.replace(/^\+56\s*9\s*/, '');
+    document.getElementById('owner-phone').value = ownerPhone;
+
     document.getElementById('owner-email').value = venue.owner_email || '';
 
     document.getElementById('venue-services').value = venue.servicios || '';
@@ -1374,7 +1388,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Obtener datos del dueño
             const ownerName = document.getElementById('owner-name').value.trim();
-            const ownerPhone = document.getElementById('owner-phone').value.trim();
+            let ownerPhone = document.getElementById('owner-phone').value.trim();
+            if (ownerPhone) {
+                ownerPhone = '+56 9 ' + ownerPhone;
+            }
             const ownerEmail = document.getElementById('owner-email').value.trim();
 
             const services = document.getElementById('venue-services').value.trim();
