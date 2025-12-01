@@ -24,9 +24,9 @@ html, body {
 
 /* --- Scrollbar Personalizado --- */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; } /* Darker for better visibility */
-::-webkit-scrollbar-thumb:hover { background: #64748b; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); } /* Track visible */
+::-webkit-scrollbar-thumb { background: #64748b; border-radius: 4px; } /* Darker thumb */
+::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 /* --- Header --- */
 .topbar-header {
@@ -1057,7 +1057,8 @@ form#reservationForm {
     /* Force scrollbar on lists when content exceeds ~3 items */
     .modal-list-container {
         max-height: 55vh; 
-        overscroll-behavior: contain;
+        overflow-y: scroll; /* Force scrollbar track to be visible */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS/Android */
     }
 
     .modal-content {
