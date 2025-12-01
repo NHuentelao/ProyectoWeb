@@ -168,7 +168,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="owner-phone">Teléfono</label>
-                                <input type="tel" id="owner-phone" placeholder="+56 9 12345678">
+                                <div class="phone-input" style="display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05);">
+                                    <span class="prefix" style="padding: 12px; color: #cbd5e1; font-weight: 500; border-right: 1px solid rgba(255,255,255,0.1); user-select: none;">+56 9</span>
+                                    <input type="tel" id="owner-phone" placeholder="12345678" maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" style="border: none; border-radius: 0; flex: 1; background: transparent; color: white;">
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -480,6 +483,14 @@
         <button onclick="document.getElementById('viewMessageModal').classList.add('hidden')" class="btn secondary">Cerrar</button>
       </div>
     </div>
+  </div>
+
+  <!-- Lightbox para imágenes -->
+  <div id="lightboxModal" class="modal hidden" style="z-index: 10000; background: rgba(0,0,0,0.9);">
+      <span class="close-btn" onclick="document.getElementById('lightboxModal').classList.add('hidden')" style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer;">&times;</span>
+      <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;">
+          <img id="lightboxImage" src="" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+      </div>
   </div>
 
   <!-- Contenedor de Toasts -->

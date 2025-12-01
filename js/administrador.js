@@ -161,7 +161,12 @@ function openVenueModal(index = null) {
         document.getElementById('venue-address').value = venue.direccion;
         document.getElementById('venue-description').value = venue.descripcion || '';
         document.getElementById('owner-name').value = venue.owner_nombre || '';
-        document.getElementById('owner-phone').value = venue.owner_telefono || '';
+        
+        // Procesar teléfono para quitar prefijo +56 9
+        let phone = venue.owner_telefono || '';
+        phone = phone.replace(/^\+56\s*9\s*/, '');
+        document.getElementById('owner-phone').value = phone;
+
         document.getElementById('owner-email').value = venue.owner_email || '';
         document.getElementById('venue-services').value = venue.servicios || '';
         document.getElementById('venue-lat').value = venue.lat;
@@ -177,14 +182,17 @@ function openVenueModal(index = null) {
                 const div = document.createElement('div');
                 div.style.position = 'relative';
                 div.innerHTML = `
-                    <img src="${img.imagen_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                    <img src="${img.imagen_url}" onclick="openLightbox('${img.imagen_url}')" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #ddd;" title="Ver imagen completa">
                     <button type="button" onclick="deleteVenueImage(${img.id}, ${index})" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px;">&times;</button>
                 `;
                 galleryPreview.appendChild(div);
             });
         } else if (venue.imagen_url) {
             galleryContainer.style.display = 'block';
-            galleryPreview.innerHTML = `<img src="${venue.imagen_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">`;
+            galleryPreview.innerHTML = `
+                <div style="position: relative;">
+                    <img src="${venue.imagen_url}" onclick="openLightbox('${venue.imagen_url}')" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #ddd;" title="Ver imagen completa">
+                </div>`;
         }
 
         // Centrar mapa en el lugar
@@ -199,8 +207,8 @@ function openVenueModal(index = null) {
         selectedVenueIndex = null;
         title.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Lugar';
         
-        // Pre-llenar prefijo de teléfono para facilitar
-        document.getElementById('owner-phone').value = '+56 9 ';
+        // Campo de teléfono vacío (el prefijo es estático en HTML)
+        document.getElementById('owner-phone').value = '';
         
         // Centrar mapa en Lebu por defecto
         if (adminMap) {
@@ -1161,7 +1169,8 @@ function editVenue(index) {
     document.getElementById('owner-name').value = venue.owner_nombre || '';
     
     let ownerPhone = venue.owner_telefono || '';
-    // Mostrar el teléfono completo tal cual viene de la BD
+    // Quitar prefijo +56 9 para mostrar en el input
+    ownerPhone = ownerPhone.replace(/^\+56\s*9\s*/, '');
     document.getElementById('owner-phone').value = ownerPhone;
 
     document.getElementById('owner-email').value = venue.owner_email || '';
@@ -1345,6 +1354,24 @@ document.getElementById('viewMessageModal').addEventListener('click', (e) => {
     }
 });
 
+// Función para abrir Lightbox
+function openLightbox(src) {
+    const modal = document.getElementById('lightboxModal');
+    const img = document.getElementById('lightboxImage');
+    if (modal && img) {
+        img.src = src;
+        modal.classList.remove('hidden');
+    }
+}
+window.openLightbox = openLightbox;
+
+// Cerrar lightbox al hacer clic fuera de la imagen
+document.getElementById('lightboxModal').addEventListener('click', (e) => {
+    if (e.target.id === 'lightboxModal') {
+        e.target.classList.add('hidden');
+    }
+});
+
 // Event listener para el DOM listo
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -1380,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const div = document.createElement('div');
                             div.style.position = 'relative';
                             div.innerHTML = `
-                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #10b981;">
+                                <img src="${e.target.result}" onclick="openLightbox('${e.target.result}')" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #10b981; cursor: pointer;" title="Ver imagen completa">
                                 <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #10b981;">Archivo ${index + 1}</span>
                             `;
                             galleryPreview.appendChild(div);
@@ -1407,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const div = document.createElement('div');
                     div.style.position = 'relative';
                     div.innerHTML = `
-                        <img src="${url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #3b82f6;" onerror="this.src='https://via.placeholder.com/100?text=Error'">
+                        <img src="${url}" onclick="openLightbox('${url}')" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 2px solid #3b82f6; cursor: pointer;" onerror="this.src='https://via.placeholder.com/100?text=Error'">
                         <span style="position: absolute; bottom: -20px; left: 0; width: 100%; text-align: center; font-size: 10px; color: #3b82f6;">URL</span>
                     `;
                     galleryPreview.appendChild(div);
@@ -1434,7 +1461,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Obtener datos del dueño
             const ownerName = document.getElementById('owner-name').value.trim();
             let ownerPhone = document.getElementById('owner-phone').value.trim();
-            // Ya no agregamos prefijo automáticamente, el usuario edita el campo completo
+            if (ownerPhone) {
+                ownerPhone = '+56 9 ' + ownerPhone;
+            }
             const ownerEmail = document.getElementById('owner-email').value.trim();
 
             const services = document.getElementById('venue-services').value.trim();
