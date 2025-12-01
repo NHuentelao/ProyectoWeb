@@ -486,7 +486,8 @@ try {
 
         case 'get_venues':
             // Esta acción es pública
-            $stmt = $pdo->query("SELECT * FROM lugares WHERE status != 'deleted'");
+            // Ordenar: Disponibles primero, luego el resto (reservado/mantenimiento), y dentro de cada grupo por ID para mantener orden estable
+            $stmt = $pdo->query("SELECT * FROM lugares WHERE status != 'deleted' ORDER BY CASE WHEN status = 'available' THEN 0 ELSE 1 END, id ASC");
             $lugares = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             $isAdmin = (isset($_SESSION['user']) && isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin');
