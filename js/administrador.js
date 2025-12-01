@@ -297,10 +297,10 @@ async function loadVenues() {
                     <button onclick="showOwnerInfo(${index})" class="btn secondary small" style="margin-right: 5px; background: #6366f1;" title="Ver Dueño">
                         <i class="fas fa-user-tie"></i>
                     </button>
-                    <button onclick="openVenueModal(${index})" class="btn secondary small" style="margin-right: 5px; background: var(--blue);" title="Editar">
+                    <button onclick="openVenueModal(${index})" class="btn secondary small" style="margin-right: 5px; background: #f59e0b; color: white;" title="Editar">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button onclick="openStatusModal(${index})" class="btn secondary small" style="margin-right: 5px; background: var(--warning);" title="Cambiar Estado">
+                    <button onclick="openStatusModal(${index})" class="btn secondary small" style="margin-right: 5px; background: #10b981; color: white;" title="Cambiar Estado">
                         <i class="fas fa-exchange-alt"></i>
                     </button>
                     <button onclick="deleteVenue(${index})" class="delete-btn btn small" title="Eliminar">
