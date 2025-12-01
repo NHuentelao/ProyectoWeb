@@ -199,6 +199,9 @@ function openVenueModal(index = null) {
         selectedVenueIndex = null;
         title.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Lugar';
         
+        // Pre-llenar prefijo de teléfono para facilitar
+        document.getElementById('owner-phone').value = '+56 9 ';
+        
         // Centrar mapa en Lebu por defecto
         if (adminMap) {
             adminMap.setCenter({ lat: -37.6083, lng: -73.6472 });
@@ -1158,8 +1161,7 @@ function editVenue(index) {
     document.getElementById('owner-name').value = venue.owner_nombre || '';
     
     let ownerPhone = venue.owner_telefono || '';
-    // Eliminar prefijo +56 9 o +569 para mostrar solo los 8 dígitos en el input
-    ownerPhone = ownerPhone.replace(/^\+56\s*9\s*/, '');
+    // Mostrar el teléfono completo tal cual viene de la BD
     document.getElementById('owner-phone').value = ownerPhone;
 
     document.getElementById('owner-email').value = venue.owner_email || '';
@@ -1432,9 +1434,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Obtener datos del dueño
             const ownerName = document.getElementById('owner-name').value.trim();
             let ownerPhone = document.getElementById('owner-phone').value.trim();
-            if (ownerPhone) {
-                ownerPhone = '+56 9 ' + ownerPhone;
-            }
+            // Ya no agregamos prefijo automáticamente, el usuario edita el campo completo
             const ownerEmail = document.getElementById('owner-email').value.trim();
 
             const services = document.getElementById('venue-services').value.trim();
