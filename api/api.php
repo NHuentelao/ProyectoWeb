@@ -197,11 +197,16 @@ try {
             }
             break;
 
-        case 'register':
+        case 'send_verification_code':
             $name = $data['name'] ?? '';
             $email = $data['email'] ?? '';
             $password = $data['password'] ?? '';
             $phone = $data['phone'] ?? '';
+
+            // Validar formato de email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                send_json(['success' => false, 'message' => 'El correo electrónico no es válido.']);
+            }
 
             // Verificar si el email ya existe
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ?");
@@ -210,13 +215,70 @@ try {
                 send_json(['success' => false, 'message' => 'Ya existe una cuenta con ese correo.']);
             }
 
-            // Hashear la contraseña
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            // Generar código de verificación
+            $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-            // Crear nuevo usuario
-            $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, password, telefono, rol) VALUES (?, ?, ?, ?, 'user')");
-            $stmt->execute([$name, $email, $hashed_password, $phone]);
-            send_json(['success' => true]);
+            // Guardar datos temporalmente en sesión
+            $_SESSION['registration_data'] = [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password, // Se hasheará al verificar
+                'phone' => $phone,
+                'code' => $code,
+                'timestamp' => time()
+            ];
+
+            // Enviar correo
+            $subject = 'Código de Verificación - ReservaNoble';
+            $message = "Hola $name,<br><br>";
+            $message .= "Para completar tu registro, usa el siguiente código de verificación:<br><br>";
+            $message .= "<h2 style='color: #2563eb; letter-spacing: 5px;'>$code</h2><br>";
+            $message .= "Este código es válido por 10 minutos.<br><br>";
+            $message .= "Si no solicitaste este registro, ignora este mensaje.<br><br>";
+            $message .= "Saludos,<br>ReservaNoble";
+
+            if (send_email($email, $subject, $message)) {
+                send_json(['success' => true, 'message' => 'Código enviado a tu correo.']);
+            } else {
+                error_log("Error al enviar correo de registro a $email");
+                send_json(['success' => false, 'message' => 'Error al enviar el código. Verifica tu correo.']);
+            }
+            break;
+
+        case 'verify_registration_code':
+            $code = $data['code'] ?? '';
+
+            if (!isset($_SESSION['registration_data'])) {
+                send_json(['success' => false, 'message' => 'Sesión expirada. Regístrate nuevamente.']);
+            }
+
+            $regData = $_SESSION['registration_data'];
+
+            // Verificar tiempo (10 minutos)
+            if (time() - $regData['timestamp'] > 600) {
+                unset($_SESSION['registration_data']);
+                send_json(['success' => false, 'message' => 'El código ha expirado.']);
+            }
+
+            if ($code !== $regData['code']) {
+                send_json(['success' => false, 'message' => 'Código incorrecto.']);
+            }
+
+            // Código correcto: Crear usuario
+            $hashed_password = password_hash($regData['password'], PASSWORD_DEFAULT);
+
+            try {
+                $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, password, telefono, rol) VALUES (?, ?, ?, ?, 'user')");
+                $stmt->execute([$regData['name'], $regData['email'], $hashed_password, $regData['phone']]);
+                
+                // Limpiar sesión
+                unset($_SESSION['registration_data']);
+                
+                send_json(['success' => true, 'message' => 'Cuenta creada exitosamente.']);
+            } catch (PDOException $e) {
+                error_log("Error DB registro: " . $e->getMessage());
+                send_json(['success' => false, 'message' => 'Error al crear la cuenta en base de datos.']);
+            }
             break;
 
         case 'google_login':
