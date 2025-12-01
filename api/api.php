@@ -825,21 +825,19 @@ try {
                 $pdo->exec("UPDATE solicitudes SET status = 'rejected' WHERE id IN ($ids_str)");
             }
 
-            // Verificar si el usuario ya tiene una reserva APROBADA que se solape con este rango
+            // Verificar si el usuario ya tiene una reserva (PENDIENTE o APROBADA) que se solape con este rango
             // Lógica de solapamiento: (StartA <= EndB) and (EndA >= StartB)
-            // Aquí StartA/EndA es el nuevo evento, StartB/EndB son los eventos existentes
-            // Evento existente: fecha_evento (inicio), fecha_evento + duracion - 1 (fin)
             
             $sqlUserConflict = "SELECT COUNT(*) FROM solicitudes 
                                 WHERE id_usuario = ? 
-                                AND status = 'approved'
+                                AND status IN ('approved', 'pending')
                                 AND (fecha_evento <= ? AND (fecha_evento + (duracion_dias - 1) * INTERVAL '1 day') >= ?)";
             
             $stmt = $pdo->prepare($sqlUserConflict);
             $stmt->execute([$user_id, $endDate, $startDate]);
             
             if ($stmt->fetchColumn() > 0) {
-                send_json(['success' => false, 'message' => 'Ya tienes un evento aprobado que coincide con las fechas seleccionadas.']);
+                send_json(['success' => false, 'message' => 'Ya tienes una solicitud (pendiente o aprobada) para estas fechas.']);
             }
 
             // --- FIN VALIDACIÓN DE SEGURIDAD ---
