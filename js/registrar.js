@@ -40,7 +40,7 @@
             name: nameEl.value.trim(),
             email: emailEl.value.trim().toLowerCase(),
             password: passwordEl.value,
-            phone: '+569' + phoneEl.value.trim()
+            phone: '+56 9 ' + phoneEl.value.trim()
         };
 
         try {
