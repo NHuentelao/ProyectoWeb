@@ -465,6 +465,7 @@ async function loadUsers() {
             const row = tbody.insertRow(-1);
             const isAdminActual = currentUser && user.email === currentUser.email;
             const isSuspended = user.estado === 'suspendido';
+            const isOtherAdmin = user.rol === 'admin' && !isAdminActual;
 
             row.innerHTML = `
                 <td>${user.nombre}</td>
@@ -478,9 +479,15 @@ async function loadUsers() {
                     </span>
                 </td>
                 <td>
+                    ${!isOtherAdmin ? `
                     <button onclick="editUser(${index})" class="btn secondary small" style="margin-right: 5px; background: var(--blue);" title="Editar">
                         <i class="fas fa-edit"></i>
                     </button>
+                    ` : `
+                    <button class="btn secondary small" style="margin-right: 5px; background: #94a3b8; cursor: not-allowed;" title="No puedes editar a otro admin" disabled>
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    `}
                     ${!isAdminActual ? `
                         <button onclick="toggleUserStatus(${index})" class="btn secondary small" style="margin-right: 5px; background: ${isSuspended ? '#10b981' : '#f59e0b'};" title="${isSuspended ? 'Activar' : 'Suspender'}">
                             <i class="fas ${isSuspended ? 'fa-check' : 'fa-ban'}"></i>
@@ -540,6 +547,16 @@ function editUser(index) {
     document.getElementById('editUserPhone').value = user.telefono || '';
     document.getElementById('editUserPassword').value = ''; // Clear password field
     document.getElementById('editUserRole').value = user.rol;
+    
+    // Ocultar campo de contraseña si no es el usuario actual
+    const passInput = document.getElementById('editUserPassword');
+    const passGroup = passInput.closest('.form-group');
+    if (APP_ADMIN_USER && user.email === APP_ADMIN_USER.email) {
+        passGroup.style.display = 'block';
+    } else {
+        passGroup.style.display = 'none';
+    }
+
     document.getElementById('editUserMsg').textContent = '';
     document.getElementById('editUserMsg').className = 'msg';
     document.getElementById('editUserModal').classList.remove('hidden');

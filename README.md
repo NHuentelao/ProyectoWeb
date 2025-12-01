@@ -1,138 +1,137 @@
 # 🎉 ReservaNoble — Sistema de Reservas de Eventos
 
-## 📋 Instrucciones de Instalación y Uso
+Bienvenido a **ReservaNoble**, una plataforma moderna y responsiva para la gestión y reserva de espacios para eventos en Lebu. Este sistema permite a los usuarios explorar lugares, realizar reservas y recibir notificaciones, mientras que los administradores pueden gestionar todo el flujo desde un panel de control centralizado.
 
-### 1. Configuración de la Base de Datos
+---
 
-1. **Iniciar servidor web y base de datos**
-2. **Abrir gestor de base de datos** (ej. pgAdmin o phpMyAdmin)
-3. **Crear la base de datos** `reservas_lebu`
-4. **Ejecutar el script de creación de tablas** (el que proporcionaste)
-5. **Ejecutar el script de datos de prueba** (`datos_prueba.sql`)
+## 🛠️ Tecnologías y APIs Utilizadas
 
-### 2. Acceso al Sistema
+Este proyecto integra múltiples servicios y tecnologías para ofrecer una experiencia completa:
 
-**URL del sistema:** `http://localhost/ProyectoWeb/`
+### Backend & Base de Datos
+- **PHP 8.x:** Lógica del servidor y API REST (`api/api.php`).
+- **PostgreSQL:** Base de datos principal (compatible con despliegue en Render).
+- **MySQL:** Soporte legacy para entornos locales.
 
-### 3. Usuarios de Prueba
+### Frontend
+- **HTML5 / CSS3:** Diseño moderno, responsivo y con efectos visuales (Glassmorphism).
+- **JavaScript (ES6+):** Lógica del cliente, manejo de estado y consumo de API (Fetch).
+
+### APIs Externas
+1.  **🗺️ Google Maps JavaScript API:**
+    - Visualización interactiva de lugares.
+    - Marcadores personalizados y clustering.
+2.  **🔑 Google Identity Services (OAuth 2.0):**
+    - Inicio de sesión rápido y seguro con cuentas de Google.
+3.  **📧 Brevo API (anteriormente Sendinblue):**
+    - Envío transaccional de correos electrónicos (Confirmaciones, Recuperación de contraseña, Notificaciones).
+
+---
+
+## 📋 Instrucciones de Instalación
+
+### 1. Requisitos Previos
+- Servidor Web (Apache/Nginx) con PHP 8.0+.
+- Base de datos PostgreSQL (Recomendado) o MySQL.
+- Cuenta en Google Cloud Platform (para Maps y Login).
+- Cuenta en Brevo (para correos).
+
+### 2. Configuración de la Base de Datos
+1.  Crea una base de datos llamada `reservas_lebu`.
+2.  Ejecuta el script `schema_postgres.sql` para crear las tablas.
+3.  (Opcional) Ejecuta `datos_prueba.sql` para poblar con datos iniciales.
+
+### 3. Variables de Entorno
+Para que el sistema funcione correctamente (especialmente en producción/Render), configura las siguientes variables de entorno:
+
+| Variable | Descripción |
+| :--- | :--- |
+| `DB_HOST` | Host de la base de datos (ej. `dpg-xxx.render.com`) |
+| `DB_NAME` | Nombre de la base de datos (`reservas_lebu`) |
+| `DB_USER` | Usuario de la base de datos |
+| `DB_PASSWORD` | Contraseña de la base de datos |
+| `DB_PORT` | Puerto (por defecto `5432` para PgSQL) |
+| `BREVO_API_KEY` | Tu API Key de Brevo para envío de correos |
+
+> **Nota:** En entorno local sin variables de entorno, el sistema intentará conectar a `localhost` con credenciales por defecto (revisar `api/db.php`).
+
+---
+
+## 🚀 Cómo Usar el Sistema
+
+### Acceso
+- **URL Local:** `http://localhost/ProyectoWeb/index.html`
+- **URL Producción:** (Tu URL de Render)
+
+### Usuarios de Prueba (Datos por defecto)
 
 #### 👨‍💼 Administrador
 - **Email:** `admin@lebu.cl`
 - **Contraseña:** `admin123`
-- **Acceso:** Panel de administración completo
+- **Acceso:** `administrador.html` (Gestión total)
 
-#### 👥 Usuarios Regulares
-- **Email:** `juan@email.com` | **Contraseña:** `123456`
-- **Email:** `maria@email.com` | **Contraseña:** `123456`
-- **Email:** `carlos@email.com` | **Contraseña:** `123456`
-
-### 4. Cómo Usar el Sistema
-
-#### 🔹 Como Usuario Regular:
-
-1. **Iniciar sesión** con cualquier usuario regular
-2. **Completar el formulario de reserva:**
-   - Seleccionar tipo de evento
-   - Elegir fecha y hora
-   - Seleccionar lugar del mapa
-   - Indicar cantidad de invitados
-   - Agregar solicitudes especiales
-3. **Enviar la solicitud**
-4. **Ver el estado** en "Ver mis reservas"
-5. **Recibir notificaciones** cuando el admin apruebe/rechace
-
-#### 🔹 Como Administrador:
-
-1. **Iniciar sesión** como admin
-2. **Ir a la sección "Reservas"**
-3. **Ver todas las solicitudes pendientes**
-4. **Aprobar o rechazar** cada solicitud
-5. **Los usuarios recibirán notificaciones automáticamente**
-
-### 5. Funcionalidades del Sistema
-
-#### ✅ Formulario de Reservas
-- Validación de fechas (no permite fechas pasadas)
-- Cálculo automático de precios
-- Selección de lugares desde el mapa
-- Indicadores de carga durante el envío
-
-#### ✅ Panel de Administración
-- Gestión de usuarios
-- Gestión de lugares
-- Aprobación/rechazo de reservas
-- Gestión de reportes
-- Visualización mejorada con colores y estados
-
-#### ✅ Sistema de Notificaciones
-- Badge parpadeante para notificaciones nuevas
-- Notificaciones automáticas al aprobar/rechazar
-- Diferentes tipos de notificaciones con colores
-- Historial de notificaciones
-
-#### ✅ Gestión de Lugares
-- Crear/editar/eliminar lugares
-- Cambiar estado (disponible/mantenimiento/reservado)
-- Mapa interactivo para ubicación
-- Precios base y por persona
-
-### 6. Estados de las Reservas
-
-- 🟡 **PENDIENTE:** Esperando aprobación del administrador
-- 🟢 **APROBADA:** Reserva confirmada, lugar marcado como reservado
-- 🔴 **RECHAZADA:** Reserva no aprobada
-
-### 7. Tipos de Notificaciones
-
-- 📧 **request_approved:** Solicitud aprobada
-- ❌ **request_rejected:** Solicitud rechazada
-- ✅ **report_resolved:** Reporte resuelto
-
-### 8. Solución de Problemas
-
-#### Si el formulario no funciona:
-1. Verificar que el servidor esté ejecutándose
-2. Verificar la conexión a la base de datos
-3. Revisar la consola del navegador para errores
-
-#### Si no aparecen lugares en el mapa:
-1. Verificar que la API de Google Maps esté funcionando
-2. Verificar que haya lugares en la base de datos
-3. Revisar la consola para errores de JavaScript
-
-#### Si las notificaciones no aparecen:
-1. Verificar que el usuario esté logueado
-2. Verificar que haya notificaciones en la base de datos
-3. Recargar la página
-
-### 9. Archivos del Sistema
-
-- `inicio.php` - Página de login/registro
-- `formulario.php` - Formulario de reservas para usuarios
-- `administrador.php` - Panel de administración
-- `api/api.php` - API REST para todas las operaciones
-- `api/db.php` - Configuración de base de datos
-- `datos_prueba.sql` - Datos de ejemplo
-
-### 10. Características Técnicas
-
-- **Backend:** PHP con PDO
-- **Frontend:** HTML5, CSS3, JavaScript ES6+
-- **Base de Datos:** PostgreSQL / MySQL
-- **Mapas:** Google Maps API
-- **Iconos:** Font Awesome
-- **Diseño:** Responsive y moderno
+#### 👥 Usuario Regular
+- **Email:** `juan@email.com`
+- **Contraseña:** `123456`
+- **Acceso:** `formulario.html` (Reservas)
 
 ---
 
-## 🚀 ¡El sistema está listo para usar!
+## 🌟 Funcionalidades Principales
 
-Con estos datos de prueba podrás probar todas las funcionalidades inmediatamente. El sistema maneja automáticamente:
+### Para Usuarios (`index.html`, `formulario.html`)
+- **Exploración:** Ver lugares en lista o mapa interactivo.
+- **Filtros:** Buscar por capacidad, precio y nombre.
+- **Reservas:** Formulario dinámico con cálculo de costos en tiempo real.
+- **Estado:** Seguimiento de solicitudes (Pendiente, Aprobada, Rechazada).
+- **Notificaciones:** Alertas en tiempo real sobre el estado de la reserva.
+- **Perfil:** Gestión de datos personales y cambio de contraseña.
 
-- ✅ Envío de solicitudes de reserva
-- ✅ Aprobación/rechazo por parte del administrador  
-- ✅ Notificaciones automáticas a los usuarios
-- ✅ Gestión completa de lugares y usuarios
-- ✅ Sistema de reportes
+### Para Administradores (`administrador.html`)
+- **Dashboard:** Vista general de reservas y métricas.
+- **Gestión de Reservas:** Aprobar, rechazar o archivar solicitudes.
+- **Gestión de Lugares:** Crear, editar y eliminar espacios (incluyendo ubicación en mapa).
+- **Gestión de Usuarios:** Ver usuarios registrados y suspender cuentas.
+- **Reportes:** Ver incidencias reportadas por usuarios.
 
-¡Disfruta usando tu sistema de reservas! 🎉
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+ProyectoWeb/
+├── api/                  # Backend
+│   ├── api.php           # Controlador principal (API REST)
+│   ├── db.php            # Conexión a Base de Datos
+│   └── mail_config.php   # Configuración de Brevo (Email)
+├── css/                  # Estilos (inicio.css, formulario.css, etc.)
+├── js/                   # Lógica Frontend
+│   ├── index.js          # Lógica de Landing Page y Login
+│   ├── formulario.js     # Lógica de Usuario (Reservas)
+│   └── administrador.js  # Lógica de Admin
+├── index.html            # Landing Page (Login/Registro)
+├── formulario.html       # Panel de Usuario
+├── administrador.html    # Panel de Administración
+├── registrar.html        # Registro de nuevos usuarios
+└── schema_postgres.sql   # Esquema de Base de Datos
+```
+
+---
+
+## ❓ Solución de Problemas Frecuentes
+
+**1. El mapa no carga:**
+- Verifica que tu API Key de Google Maps tenga habilitados los servicios "Maps JavaScript API" y "Places API".
+- Revisa la consola del navegador (F12) para ver errores de cuota o referer.
+
+**2. No llegan los correos:**
+- Asegúrate de haber configurado la `BREVO_API_KEY` correctamente.
+- Verifica que el remitente configurado en `api/mail_config.php` esté validado en tu cuenta de Brevo.
+
+**3. Error de conexión a Base de Datos:**
+- Si estás en local, revisa que tu servidor PostgreSQL/MySQL esté corriendo.
+- Si estás en Render, verifica las variables de entorno en el dashboard.
+
+---
+
+© 2025 ReservaNoble. Todos los derechos reservados.

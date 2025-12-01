@@ -577,14 +577,20 @@ try {
                 $user['name'], $user['email'], $user['phone'], $user['role'], $user_id
             ]);
 
-            // Actualizar contraseña si se proporciona (solo para uno mismo o usuarios normales)
+            // Actualizar contraseña si se proporciona (solo para uno mismo)
             if (!empty($user['password'])) {
-                if (strlen($user['password']) < 6) {
-                    send_json(['success' => false, 'message' => 'La contraseña debe tener al menos 6 caracteres.']);
+                // RESTRICCIÓN: Solo el propio usuario puede cambiar su contraseña
+                if ($user_id != get_session_user_id()) {
+                    // Si se intenta cambiar la contraseña de otro, se ignora o se envía error.
+                    // En este caso, simplemente no hacemos nada con la contraseña.
+                } else {
+                    if (strlen($user['password']) < 6) {
+                        send_json(['success' => false, 'message' => 'La contraseña debe tener al menos 6 caracteres.']);
+                    }
+                    $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
+                    $stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE id = ?");
+                    $stmt->execute([$hashed_password, $user_id]);
                 }
-                $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE id = ?");
-                $stmt->execute([$hashed_password, $user_id]);
             }
 
             // Si el admin se edita a sí mismo, actualizar la sesión
