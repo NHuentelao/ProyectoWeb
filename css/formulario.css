@@ -1056,10 +1056,10 @@ form#reservationForm {
 
     /* Force scrollbar on lists when content exceeds ~3 items */
     .modal-list-container {
-        max-height: 60vh; 
+        height: 55vh !important; 
         overflow-y: auto !important; /* Force scroll */
         -webkit-overflow-scrolling: touch; /* Smooth scrolling */
-        padding-bottom: 20px; /* Ensure last item is visible */
+        padding-bottom: 40px; /* Ensure last item is visible */
     }
 
     .modal-content {
