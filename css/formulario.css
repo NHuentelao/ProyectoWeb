@@ -755,6 +755,8 @@ form#reservationForm {
 /* Estilos Formulario Cuenta - Mejorados */
 .account-form {
   padding: 10px 0;
+  flex: 1;
+  overflow-y: auto;
 }
 .account-form .form-group { 
   margin-bottom: 24px; /* Increased margin */
