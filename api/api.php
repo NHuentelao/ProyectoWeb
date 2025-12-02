@@ -768,6 +768,16 @@ try {
 
         case 'create_request': // (User)
             $user_id = get_session_user_id();
+            
+            // Verificar si el usuario aún existe en la BD
+            $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE id = ?");
+            $stmt->execute([$user_id]);
+            if (!$stmt->fetch()) {
+                session_destroy();
+                http_response_code(401);
+                send_json(['success' => false, 'message' => 'Tu cuenta ya no existe. Por favor inicia sesión nuevamente.']);
+            }
+
             $req = $data;
 
             // --- 1. VALIDACIÓN DE SEGURIDAD (RATE LIMIT) ---
@@ -1121,6 +1131,16 @@ try {
 
         case 'create_report': // (User)
             $user_id = get_session_user_id();
+            
+            // Verificar si el usuario aún existe en la BD (Evitar error de llave foránea si fue eliminado)
+            $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE id = ?");
+            $stmt->execute([$user_id]);
+            if (!$stmt->fetch()) {
+                session_destroy();
+                http_response_code(401);
+                send_json(['success' => false, 'message' => 'Tu cuenta ya no existe. Por favor inicia sesión nuevamente.']);
+            }
+
             $type = $data['type'] ?? 'otro';
             $message = $data['message'] ?? '';
 
