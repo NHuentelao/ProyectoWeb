@@ -689,9 +689,11 @@ try {
                 send_json(['success' => false, 'message' => 'No puedes eliminar tu propia cuenta mientras estás en sesión.']);
             }
             // Eliminar registros relacionados primero para evitar violación de clave foránea
+            // En un entorno de pruebas, eliminamos TODO lo relacionado al usuario para evitar errores
             $pdo->prepare("DELETE FROM notificaciones WHERE id_usuario = ?")->execute([$id]);
             $pdo->prepare("DELETE FROM solicitudes WHERE id_usuario = ?")->execute([$id]);
-            // $pdo->prepare("DELETE FROM reportes WHERE id_usuario = ?")->execute([$id]); // Comentado para intentar preservar reportes si la BD lo permite
+            $pdo->prepare("DELETE FROM reportes WHERE id_usuario = ?")->execute([$id]);
+            
             // Ahora eliminar el usuario
             $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
             $stmt->execute([$id]);
