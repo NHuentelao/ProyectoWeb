@@ -19,8 +19,8 @@ let allMessages = [];
 async function apiFetch(action, options = {}) {
     const { method = 'GET', body = null } = options;
     
-    // La URL ahora apunta a la carpeta 'api'
-    const url = `api/api.php?action=${action}`;
+    // La URL ahora apunta a la carpeta 'api' con timestamp para evitar caché
+    const url = `api/api.php?action=${action}&t=${new Date().getTime()}`;
     
     const fetchOptions = {
         method,
@@ -907,6 +907,7 @@ function getReportTypeLabel(type) {
 async function loadReports() {
     try {
         allReports = await apiFetch('get_reports'); // API ya ordena
+        console.log('Reportes cargados:', allReports);
         
         // Normalizar estados
         if (allReports && allReports.length > 0) {
@@ -1520,6 +1521,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // PROCESAR IMAGENES (URL o ARCHIVOS)
             const urlInput = document.getElementById('venue-images');
             let imageUrl = urlInput ? urlInput.value.trim() : '';
+            console.log('Procesando imagen. URL input existe:', !!urlInput, 'Valor:', imageUrl);
+
             const fileInput = document.getElementById('venue-image-file');
             let newImages = [];
 
