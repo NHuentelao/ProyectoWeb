@@ -900,6 +900,7 @@ async function updateRequestStatus(index, newStatus, btnElement = null) {
 
 // Helper para traducir el 'tipo' de reporte
 function getReportTypeLabel(type) {
+    if (!type) return 'Otro';
     return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
@@ -1005,12 +1006,22 @@ function renderReports() {
                 </button>
             </td>
             <td>
-                ${isResolved ? 
-                    '<span class="badge badge-status" style="background: var(--success-color);">Resuelto</span>' : 
-                    `<button onclick="openReplyModal(${originalIndex}, 'report')" class="btn small" style="background: #3b82f6; color: white;">
-                        <i class="fas fa-reply"></i> Responder
-                    </button>`
-                }
+                <div style="display: flex; gap: 5px;">
+                    ${isResolved ? 
+                        '<span class="badge badge-status" style="background: var(--success-color);">Resuelto</span>' : 
+                        `<button onclick="openReplyModal(${originalIndex}, 'report')" class="btn small" style="background: #3b82f6; color: white;" title="Responder">
+                            <i class="fas fa-reply"></i>
+                        </button>`
+                    }
+                    
+                    <button onclick="toggleReportStatus(${originalIndex})" class="btn small" style="background: ${isResolved ? '#f59e0b' : '#10b981'}; color: white;" title="${isResolved ? 'Marcar Pendiente' : 'Marcar Resuelto'}">
+                        <i class="fas ${isResolved ? 'fa-undo' : 'fa-check'}"></i>
+                    </button>
+                    
+                    <button onclick="deleteReport(${originalIndex})" class="delete-btn btn small" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
