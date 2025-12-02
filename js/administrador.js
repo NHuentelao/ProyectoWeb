@@ -254,7 +254,7 @@ function openVenueModal(index = null) {
     }
 
     // IMPORTANTE: Redimensionar mapa al mostrar modal
-    if (adminMap) {
+    if (typeof adminMap !== 'undefined' && adminMap) {
         setTimeout(() => {
             google.maps.event.trigger(adminMap, 'resize');
             if (index !== null) {
@@ -264,6 +264,8 @@ function openVenueModal(index = null) {
                 adminMap.setCenter({ lat: -37.6083, lng: -73.6472 });
             }
         }, 100);
+    } else {
+        console.warn('Google Maps no está inicializado. Verifica tu conexión o la API Key.');
     }
 }
 window.openVenueModal = openVenueModal;
