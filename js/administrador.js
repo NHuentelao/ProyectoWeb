@@ -322,6 +322,9 @@ async function loadVenues() {
 
 // Agregar marcador al mapa
 function addMarker(venue) {
+    // Verificar si la API de Google Maps está cargada
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') return null;
+
     const lat = parseFloat(venue.lat);
     const lng = parseFloat(venue.lng);
     if (!isFinite(lat) || !isFinite(lng)) return null;
@@ -1229,6 +1232,10 @@ function editVenue(index) {
     }
 
     adminMap.setCenter({ lat: parseFloat(venue.lat), lng: parseFloat(venue.lng) });
+    
+    // Asegurar que el modal esté visible
+    document.getElementById('venueModal').classList.remove('hidden');
+    
     document.getElementById('venueForm').scrollIntoView({ behavior: 'smooth' });
 }
 window.editVenue = editVenue;
