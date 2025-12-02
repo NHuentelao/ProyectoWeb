@@ -1216,8 +1216,13 @@ function editVenue(index) {
 
     document.getElementById('venue-services').value = venue.servicios || '';
     
-    // Establecer URL de imagen
-    document.getElementById('venue-images').value = venue.imagen_url || ''; 
+    // Establecer URL de imagen si el input existe
+    const imageInput = document.getElementById('venue-images');
+    if (imageInput) {
+        imageInput.value = venue.imagen_url || '';
+        // Trigger input event to show preview
+        imageInput.dispatchEvent(new Event('input'));
+    }
     
     document.getElementById('venue-lat').value = venue.lat;
     document.getElementById('venue-lng').value = venue.lng;
@@ -1225,12 +1230,6 @@ function editVenue(index) {
     document.getElementById('venue-base-price').value = venue.precio_base || '';
     document.getElementById('venue-price-per-guest').value = venue.precio_por_persona || '';
     
-    // Trigger input event to show preview
-    const imageInput = document.getElementById('venue-images');
-    if (imageInput) {
-        imageInput.dispatchEvent(new Event('input'));
-    }
-
     adminMap.setCenter({ lat: parseFloat(venue.lat), lng: parseFloat(venue.lng) });
     
     // Asegurar que el modal esté visible
@@ -1517,7 +1516,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const pricePerGuest = document.getElementById('venue-price-per-guest').value.trim();
             
             // PROCESAR IMAGENES (URL o ARCHIVOS)
-            let imageUrl = document.getElementById('venue-images').value.trim();
+            const urlInput = document.getElementById('venue-images');
+            let imageUrl = urlInput ? urlInput.value.trim() : '';
             const fileInput = document.getElementById('venue-image-file');
             let newImages = [];
 
@@ -1556,6 +1556,10 @@ document.addEventListener('DOMContentLoaded', function() {
             let venue_id = null;
             if (selectedVenueIndex !== null && allVenues[selectedVenueIndex]) {
                 venue_id = allVenues[selectedVenueIndex].id;
+                // Si estamos editando y no hay nueva imagen (ni URL ni archivo), mantener la existente
+                if (!imageUrl && newImages.length === 0) {
+                    imageUrl = allVenues[selectedVenueIndex].imagen_url || '';
+                }
             }
 
             const formData = new FormData();
