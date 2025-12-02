@@ -691,7 +691,7 @@ try {
             // Eliminar registros relacionados primero para evitar violación de clave foránea
             $pdo->prepare("DELETE FROM notificaciones WHERE id_usuario = ?")->execute([$id]);
             $pdo->prepare("DELETE FROM solicitudes WHERE id_usuario = ?")->execute([$id]);
-            $pdo->prepare("DELETE FROM reportes WHERE id_usuario = ?")->execute([$id]);
+            // $pdo->prepare("DELETE FROM reportes WHERE id_usuario = ?")->execute([$id]); // Comentado para intentar preservar reportes si la BD lo permite
             // Ahora eliminar el usuario
             $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
             $stmt->execute([$id]);
