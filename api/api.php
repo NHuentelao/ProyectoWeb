@@ -1153,7 +1153,7 @@ try {
                 send_json(['success' => false, 'message' => 'El mensaje es muy corto. Por favor detalla más el problema (mínimo 10 caracteres).']);
             }
 
-            // 2. Límite de Tiempo (Cooldown): 5 minutos entre reportes
+            // 2. Límite de Tiempo (Cooldown): Reducido para pruebas (antes 5 min)
             $stmt = $pdo->prepare("SELECT created_at FROM reportes WHERE id_usuario = ? ORDER BY created_at DESC LIMIT 1");
             $stmt->execute([$user_id]);
             $last_report = $stmt->fetchColumn();
@@ -1163,9 +1163,9 @@ try {
                 $current_time = time();
                 $minutes_diff = ($current_time - $last_time) / 60;
 
-                if ($minutes_diff < 5) { // 5 minutos de espera
-                    $wait_time = ceil(5 - $minutes_diff);
-                    send_json(['success' => false, 'message' => "Por favor espera $wait_time minutos antes de enviar otro reporte."]);
+                if ($minutes_diff < 0.1) { // 6 segundos de espera (prácticamente nada)
+                    $wait_time = ceil(1 - $minutes_diff); // Mensaje genérico
+                    send_json(['success' => false, 'message' => "Por favor espera unos segundos antes de enviar otro reporte."]);
                 }
             }
             // --- FIN VALIDACIÓN ---

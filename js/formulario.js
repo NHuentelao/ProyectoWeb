@@ -904,9 +904,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!type || !message) { showToast('Completa todos los campos', 'warning'); return; }
 
         try {
-            await apiFetch('create_report', { method: 'POST', body: { type, message } });
-            showToast('Reporte enviado', 'success');
-            reportModal.classList.add('hidden');
+            const result = await apiFetch('create_report', { method: 'POST', body: { type, message } });
+            if (result.success) {
+                showToast('Reporte enviado', 'success');
+                reportModal.classList.add('hidden');
+                // Limpiar formulario
+                document.getElementById('reportType').value = '';
+                document.getElementById('reportMessage').value = '';
+            } else {
+                showToast(result.message || 'Error al enviar reporte', 'error');
+            }
         } catch (error) { showToast(error.message, 'error'); }
     });
 
