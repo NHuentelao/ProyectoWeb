@@ -991,9 +991,13 @@ function renderReports() {
         const tr = document.createElement('tr');
         const isResolved = report.status === 'resolved';
         
+        // Manejo de usuarios eliminados (LEFT JOIN)
+        const userName = report.userName || '<span style="color:red; font-style:italic;">Usuario Eliminado</span>';
+        const userEmail = report.userEmail || 'N/A';
+
         tr.innerHTML = `
-            <td>${report.userName}</td>
-            <td>${report.userEmail}</td>
+            <td>${userName}</td>
+            <td>${userEmail}</td>
             <td><strong>${getReportTypeLabel(report.tipo)}</strong></td>
             <td style="vertical-align: middle;">
                 <button onclick="viewMessage(${originalIndex}, 'report')" class="btn" style="background-color: #3b82f6; color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.9rem;">
@@ -1372,8 +1376,9 @@ function viewMessage(index, type) {
     
     if (type === 'report') {
         const report = allReports[index];
+        const userName = report.userName || 'Usuario Eliminado';
         content = `<strong>Tipo:</strong> ${getReportTypeLabel(report.tipo)}\n\n${report.mensaje}`;
-        title = `Reporte de ${report.userName}`;
+        title = `Reporte de ${userName}`;
     } else {
         const msg = allMessages[index];
         content = `<strong>Asunto:</strong> ${msg.asunto}\n\n${msg.mensaje}`;

@@ -1110,9 +1110,10 @@ try {
 
         case 'get_reports': // (Admin)
             check_admin();
+            // Usamos LEFT JOIN para que los reportes no desaparezcan si el usuario es eliminado
             $sql = "SELECT r.*, u.nombre as \"userName\", u.email as \"userEmail\" 
                     FROM reportes r
-                    JOIN usuarios u ON r.id_usuario = u.id
+                    LEFT JOIN usuarios u ON r.id_usuario = u.id
                     ORDER BY r.status ASC, r.created_at DESC";
             $stmt = $pdo->query($sql);
             send_json($stmt->fetchAll());
@@ -1147,7 +1148,8 @@ try {
             }
             // --- FIN VALIDACIÓN ---
             
-            $stmt = $pdo->prepare("INSERT INTO reportes (id_usuario, tipo, mensaje) VALUES (?, ?, ?)");
+            // Forzamos status 'pending' para asegurar que aparezca en la pestaña correcta
+            $stmt = $pdo->prepare("INSERT INTO reportes (id_usuario, tipo, mensaje, status) VALUES (?, ?, ?, 'pending')");
             $stmt->execute([$user_id, $type, $message]);
             send_json(['success' => true]);
             break;
